@@ -1,173 +1,128 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="/img/main/ico_favicon_2.ico">
-    <title>데모 관리자</title>
-    <link rel="stylesheet" href="/css/reset.css">
-    <link rel="stylesheet" href="/css/admin/adminMusign.min.css">
-    <link rel="stylesheet" href="/css/admin/layout.min.css">
-    <link rel="stylesheet" href="/css/admin/user.min.css">
-    <link rel="stylesheet" href="/css/admin/sub.min.css">
-
-    <script src="/js/library/jquery.js"></script> 
-    <script src="/js/jquery-ui.min.js"></script>
-    <script src="/js/admin/mu_ui.js"></script>
-    <script src="/js/admin/function.js"></script>
-    <!--나이스셀렉트-->
-    <!-- <link rel="stylesheet" href="/niceSelect/nice-select2.css"> -->
-    <!-- <script src="/niceSelect/nice-select2.js"></script> -->
-    <script src="/niceSelect/jquery.nice-select.min.js"></script>
-    
-</head>
-
-<body>
-    <div class="admin_header">
-        <header id="header" class="">
-            <div class="header_top_wrap">
-                <h2 class="header_logo">
-                    <a href="/admin/dashboard">
-                        <img src="/img/admin/layout/poly_logo.png" alt="logo">
-                    </a>
-                </h2>
-                <h3 class="header_menu">
-                    <img src="/img/admin/icon/icon_menu.png" alt="poly">
-                    <div class="user_info_wrap ver_02">
-                        <div class="select_shadow active">
-                            <span class="user_menu">POLYadmin01</span>
-                            <ul class="user_menu_list">
-                                <li><a href="/admin/mypage">마이페이지</a></li>
-                                <li><a href="/admin/user/logout">로그아웃</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </h3>
-                <nav class="gnb">
-                    <ul class="main_menu">
-                        <li class="dep1 main_manage dis-no" th:classappend="${#httpServletRequest.requestURI.contains('test')} ? 'menu_on'">
-                            <a class="main_menu_btn menu_home"><span class="main_menu_txt"></span></a>
-                        </li>
-                        <li class="dep1 cont_manage menu_A menu_yn" th:classappend="${#httpServletRequest.requestURI.contains('content')} ? 'menu_on'">
-                            <a class="main_menu_btn menu_banner"><span class="main_menu_txt"></span></a>
-                            <ul class="sub_menu">
-                                <li class="sub_menu_tit_wrap">
-                                    <span class="sub_menu_tit">콘텐츠 관리</span>
-                                </li>
-                                <li class="sub_menu_depth02">
-                                    <span class="sub_depth02_tit"></span>
-                                    <ul class="sub_menu_depth03">
-                                        <li id="A3" class="list_round menu_yn" th:classappend="${#httpServletRequest.requestURI.contains('news')} ? 'on'" data-tap="depth3_menu_tap"><a href="/admin/content/news">News 관리</a></li>
-                                        <li id="A1" class="list_round menu_yn" th:classappend="${#httpServletRequest.requestURI.contains('bi')} ? 'on'" data-tap="depth3_menu_tap"><a href="/admin/content/bi">BI 관리</a></li>
-                                        <li id="A2" class="list_round menu_yn" th:classappend="${#httpServletRequest.requestURI.contains('history')} ? 'on'" data-tap="depth3_menu_tap"><a href="/admin/content/history">History 관리</a></li>
-                                        <li id="A4" class="list_round menu_yn" th:classappend="${#httpServletRequest.requestURI.contains('bz')} ? 'on'" data-tap="depth3_menu_tap"><a href="/admin/content/bz_academy">Business 관리</a>
-                                            <ul class="sub_menu_depth04">
-                                                <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('bz_academy')} ? 'on'"><a href="/admin/content/bz_academy">학원 사업</a></li>
-                                                <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('bz_content')} ? 'on'"><a href="/admin/content/bz_content">콘텐츠 사업</a></li>
-                                                <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('bz_smart')} ? 'on'"><a href="/admin/content/bz_smart">스마트러닝 사업</a></li>
-                                                <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('bz_global')} ? 'on'"><a href="/admin/content/bz_global">글로벌 사업</a></li>
-                                                <!-- <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('bz_rnd')} ? 'on'"><a href="/admin/content/bz_rnd">R&D 관리</a></li> -->
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="dep1 recruit_manage menu_B menu_yn" th:classappend="${#httpServletRequest.requestURI.contains('recruit') or #httpServletRequest.requestURI.contains('apply') or #httpServletRequest.requestURI.contains('talent_pool') or #httpServletRequest.requestURI.contains('faq')} ? 'menu_on'">
-                            <a href="/admin/recruit/corporation" class="main_menu_btn menu_content"><span class="main_menu_txt"></span></a>
-                            <ul class="sub_menu">
-                                <li class="sub_menu_tit_wrap">
-                                    <span class="sub_menu_tit">채용 관리</span>
-                                </li>
-                                <li id="B1" class="sub_menu_depth02 menu_yn">
-                                    <span class="sub_depth02_tit">채용 기본 설정</span>
-                                    <ul class="sub_menu_depth03">
-                                        <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('corporation')} ? 'on'"><a href="/admin/recruit/corporation">채용 법인/브랜드 관리</a></li>
-                                        <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('category_filter')} ? 'on'"><a href="/admin/recruit/category_filter">채용 카테고리/필터 관리</a></li>
-                                    </ul>
-                                </li>
-                                <li id="B2" class="sub_menu_depth02 sub_menu_drop menu_yn active">
-                                    <span class="sub_depth02_tit">채용 공고</span>
-                                    <ul class="sub_menu_depth03 user_job_notice">
-                                        <!--채용 공고 관리 페이지 들어가는 부분 -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
-                                    </ul>
-                                </li>
-                                <li id="B3" class="sub_menu_depth02 sub_menu_drop menu_yn active">
-                                    <span class="sub_depth02_tit">입사지원</span>
-                                    <ul class="sub_menu_depth03 user_apply">
-                                        <!--입사지원 관리 페이지 들어가는 부분 -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-    <!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
-                                    </ul>
-                                </li>
-                                <li id="B4" class="sub_menu_depth02 menu_yn">
-                                    <span class="sub_depth02_tit">인재풀</span>
-                                    <ul class="sub_menu_depth03">
-                                        <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('talent_pool')} ? 'on'"><a href="/admin/talent_pool/regist_list">인재풀 등록 리스트</a></li>
-                                    </ul>
-                                </li>
-                                <li id="B5" class="sub_menu_depth02 menu_yn">
-                                    <span class="sub_depth02_tit">FAQ</span>
-                                    <ul class="sub_menu_depth03">
-                                        <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('faq_category')} ? 'on'"><a href="/admin/faq/faq_category">FAQ 카테고리 관리</a></li>
-                                        <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('faq_manage')  or #httpServletRequest.requestURI.contains('faq_edit')} ? 'on'"><a href="/admin/faq/faq_manage">FAQ 관리</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li id="C1" class="dep1 setting_manage menu_yn" th:classappend="${#httpServletRequest.requestURI.contains('setting')} ? 'menu_on'">
-                            <a href="/admin/setting/admin_list" class="main_menu_btn menu_qna"><span class="main_menu_txt"></span></a>
-                            <ul class="sub_menu">
-                                <li class="sub_menu_tit_wrap">
-                                    <span class="sub_menu_tit">관리자 관리</span>
-                                </li>
-                                <li class="sub_menu_depth02">
-                                    <span class="sub_depth02_tit"></span>
-                                    <ul class="sub_menu_depth03">
-                                        <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('setting')} ? 'on'"><a href="/admin/setting/admin_list">계정 관리</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="header_btm_wrap">
-                <a href="/" class="home_btn" target='_blank'>
-                    <img src="/img/admin/icon/icon_home_master.png" alt="master_web">
-                    <span class="txt">마스터웹<br>바로가기</span>
+    <header id="header" class="">
+        <div class="header_top_wrap">
+            <h2 class="header_logo">
+                <a href="/admin/dashboard">
+                    <img src="/img/admin/layout/logo.png" alt="logo">
                 </a>
-            </div>
-        </header>
-    </div>
+            </h2>
+            <h3 class="header_menu">
+                <img src="/img/admin/icon/icon_menu.png" alt="poly">
+                <div class="user_info_wrap ver_02">
+                    <div class="select_shadow active">
+                        <span class="user_menu">POLYadmin01</span>
+                        <ul class="user_menu_list">
+                            <li><a href="/admin/mypage">마이페이지</a></li>
+                            <li><a href="/admin/user/logout">로그아웃</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </h3>
+            <nav class="gnb">
+                <ul class="main_menu">
+                    <li class="dep1 cont_manage menu_A menu_yn menu_on">
+                        <a href="../pages/sub/content/news.html" class="main_menu_btn menu_banner"><span class="main_menu_txt"></span></a>
+                        <ul class="sub_menu">
+                            <li class="sub_menu_tit_wrap">
+                                <span class="sub_menu_tit">콘텐츠 관리</span>
+                            </li>
+                            <li class="sub_menu_depth02">
+                                <span class="sub_depth02_tit"></span>
+                                <ul class="sub_menu_depth03">
+                                    <li id="A3" class="list_round menu_yn on"  data-tap="depth3_menu_tap"><a href="/admin/content/news">News 관리</a></li>
+                                    <li id="A1" class="list_round menu_yn" data-tap="depth3_menu_tap"><a href="/admin/content/bi">BI 관리</a></li>
+                                    <li id="A2" class="list_round menu_yn" data-tap="depth3_menu_tap"><a href="/admin/content/history">History 관리</a></li>
+                                    <li id="A4" class="list_round menu_yn"data-tap="depth3_menu_tap"><a href="/admin/content/bz_academy">Business 관리</a>
+                                        <ul class="sub_menu_depth04">
+                                            <li class="list_round"><a href="/admin/content/bz_academy">학원 사업</a></li>
+                                            <li class="list_round"><a href="/admin/content/bz_content">콘텐츠 사업</a></li>
+                                            <li class="list_round"><a href="/admin/content/bz_smart">스마트러닝 사업</a></li>
+                                            <li class="list_round"><a href="/admin/content/bz_global">글로벌 사업</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dep1 recruit_manage menu_B menu_yn">
+                        <a href="/admin/recruit/corporation" class="main_menu_btn menu_content"><span class="main_menu_txt"></span></a>
+                        <ul class="sub_menu">
+                            <li class="sub_menu_tit_wrap">
+                                <span class="sub_menu_tit">채용 관리</span>
+                            </li>
+                            <li id="B1" class="sub_menu_depth02 menu_yn">
+                                <span class="sub_depth02_tit">채용 기본 설정</span>
+                                <ul class="sub_menu_depth03">
+                                    <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('corporation')} ? 'on'"><a href="/admin/recruit/corporation">채용 법인/브랜드 관리</a></li>
+                                    <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('category_filter')} ? 'on'"><a href="/admin/recruit/category_filter">채용 카테고리/필터 관리</a></li>
+                                </ul>
+                            </li>
+                            <li id="B2" class="sub_menu_depth02 sub_menu_drop menu_yn active">
+                                <span class="sub_depth02_tit">채용 공고</span>
+                                <ul class="sub_menu_depth03 user_job_notice">
+                                    <!--채용 공고 관리 페이지 들어가는 부분 -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('job_notice_inspiration')} ? 'on'"><a href="/admin/recruit/job_notice_inspiration">POLY.Inspiration(본사) 관리</a></li> -->
+                                </ul>
+                            </li>
+                            <li id="B3" class="sub_menu_depth02 sub_menu_drop menu_yn active">
+                                <span class="sub_depth02_tit">입사지원</span>
+                                <ul class="sub_menu_depth03 user_apply">
+                                    <!--입사지원 관리 페이지 들어가는 부분 -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+<!--                                         <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('apply')} ? 'on'"><a href="/admin/apply/apply_inspiration">POLY.Inspiration(본사) 입사지원</a></li> -->
+                                </ul>
+                            </li>
+                            <li id="B4" class="sub_menu_depth02 menu_yn">
+                                <span class="sub_depth02_tit">인재풀</span>
+                                <ul class="sub_menu_depth03">
+                                    <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('talent_pool')} ? 'on'"><a href="/admin/talent_pool/regist_list">인재풀 등록 리스트</a></li>
+                                </ul>
+                            </li>
+                            <li id="B5" class="sub_menu_depth02 menu_yn">
+                                <span class="sub_depth02_tit">FAQ</span>
+                                <ul class="sub_menu_depth03">
+                                    <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('faq_category')} ? 'on'"><a href="/admin/faq/faq_category">FAQ 카테고리 관리</a></li>
+                                    <li class="list_round" th:classappend="${#httpServletRequest.requestURI.contains('faq_manage')  or #httpServletRequest.requestURI.contains('faq_edit')} ? 'on'"><a href="/admin/faq/faq_manage">FAQ 관리</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="header_btm_wrap">
+            <a href="/" class="home_btn" target='_blank'>
+                <img src="/img/admin/icon/icon_home_master.png" alt="master_web">
+                <span class="txt">마스터웹<br>바로가기</span>
+            </a>
+        </div>
+    </header>
 
-</body>
 </html>

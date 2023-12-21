@@ -1,40 +1,44 @@
-
 <!DOCTYPE html>
-<html lang="en">
-    <div id="header"></div>
+<html lang="ko">
+    <head></head>
     <body>
-        <div class="admin_container">
-            <main id="container">
-                <div class="content_wrapper upload_section_wrapper dashboard main">
-                    <section class="section dashboard_section">
-                        <div class="cont_box">
-                            <div class="img_box">
-                                <img src="/img/admin/layout/poly_logo.png" alt="logo">
+        <div class="admin_layout">
+            <div class="admin_header"></div>
+            <div class="admin_container">
+                <main id="container">
+                    <div class="content_wrapper upload_section_wrapper dashboard main">
+                        <section class="section dashboard_section">
+                            <div class="cont_box">
+                                <div class="img_box">
+                                    <img src="/img/admin/layout/logo.png" alt="logo">
+                                </div>
+                                <h1 class="tit ko">
+                                    안녕하세요, <span class="user_id">HELLO, WORLD!</span>님.
+                                </h1>
+                                <p class="txt ko">
+                                    본 데모 관리자 시스템은 포트폴리오 이용자에 한해 관람할 수 있습니다.<br>
+                                    불법적인 접근 및 사용시 관련 법규에 의해 처벌될 수 있으며<br>
+                                    문제 발생 시 포트폴리오 담당자에게 문의하시길 바랍니다.
+                                </p>
+                                <div class="info_wrap">
+                                    <span class="master_info">포트폴리오 관리자 : 김수지 </span>
+                                </div>
                             </div>
-                            <h1 class="tit ko">
-                                안녕하세요, <span class="user_id">POLYadmin01</span>님.
-                            </h1>
-                            <p class="txt ko">
-                                본 시스템은 Poly 마스터웹 임직원 및 관계자 중 사전 등록된 사용자에 한해 사용할 수 있습니다.<br>
-                                불법적인 접근 및 사용시 관련 법규에 의해 처벌될 수 있습니다.<br>
-                                일부 메뉴에 접근이 불가할 경우, 마스터 관리자에게 문의하시길 바랍니다.
-                            </p>
-                            <div class="info_wrap">
-                                <span class="master_info">마스터 관리자 : &nbsp&nbsp&nbsp&nbsp&nbsp 이택근 부장 / aaron.lee@edu-poly.com</span>
-                            </div>
-                        </div>
-                
-                    </section>
-                
-                </div>
-            </main>
+                    
+                        </section>
+                    
+                    </div>
+                </main>
+            </div>
         </div>
     </body>
 </html>
 
+<script src="/js/library/jquery.js"></script> 
 <script>
     $(document).ready(function(){
-        $('#header').load("./common/header.html");
+        $('head').load("/pages/common/layout.html");
+        $('.admin_header').load("./pages/common/header.html");
     });
 </script>
 
