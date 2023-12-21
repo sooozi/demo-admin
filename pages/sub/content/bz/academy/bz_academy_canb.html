@@ -1,0 +1,147 @@
+<!-- 콘텐츠관리 > Business관리 > 학원 사업 > canb(리스트) [국문] -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="admin/common/layout">
+<th:block layout:fragment="adminContent">
+    <link rel="stylesheet" href="/css/admin/sub_content.min.css">
+
+    <script>
+        function EnterKeyCheck(e) {
+            let code = event.keyCode;
+            if (code == 13) {
+                goSearch();
+            }
+        }
+
+        //선택항목 삭제
+        function delBzAcademy() {
+            var chk_idx_arr = "";
+            $('[name=chk_list]').each(function () {
+                if ($(this).prop('checked') == true) {
+                    chk_idx_arr += $(this).val() + "|";
+                }
+            })
+
+            if (chk_idx_arr == "") {
+                alert('체크된 학원 사업이 없습니다.');
+                return;
+            }
+
+            if (!confirm("정말 삭제하시겠습니까?")) {
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/content/delBzAcademy",
+                dataType: "text",
+                data:
+                {
+                    chk_idx_arr: chk_idx_arr
+                },
+                error: function () {
+                    console.log("AJAX ERROR");
+                },
+                success: function (data) {
+                    // console.log(data);
+                    var result = JSON.parse(data);
+                    alert(result.msg);
+                    if (result.isSuc == 'success') {
+                        location.reload();
+                    }
+                }
+            });
+        }
+
+    </script>
+
+    <div class="content_wrapper upload_section_wrapper sub content bz bz_list bz_academy">
+        <section class="section admin_section">
+            <div class="page_breadcrumb_wrap">
+                <span class="bc_cont depth01 home" style="width: 12px; height: 12px;">
+                    <img src="/img/admin/icon/lnb_home.png" alt="home">
+                </span>
+                <span class="bc_cont depth02">콘텐츠 관리</span>
+                <span class="bc_cont depth03">Business 관리</span>
+                <span class="bc_cont depth04">학원 사업</span>
+                <span class="bc_cont depth05">국문 CANB</span>
+            </div>
+
+            <div class="section_top">
+                <div class="tit_cont">
+                    <h3 class="page_name">국문 CANB</h3>
+                </div>
+                <div class="btn_cont">
+                    <div class="list_search popup_ver">
+                        <div class="search_box">
+                            <div class="search_input">
+                                <input type="search" title="리스트 검색" placeholder="여기에 검색어를 입력하세요." id="search_name" name="search_name" onkeyup="EnterKeyCheck(this)" th:value="${search_name}">
+                                <button type="button" class="search_detail_btn">검색조건 열기</button>
+                            </div>
+                            <button type="button" class="search_btn" onclick="goSearch()"></button>
+                        </div>
+                        <div class="popup_detail popup_detail_nonborder list_search_detail muPopup_content">
+                            <form>
+                                <dl>
+                                    <dt>노출 여부</dt>
+                                    <dd>
+                                        <div class="input_radio_wrap">
+                                            <span class="search_radio"><input type="radio" id="search_show_all" name="search_show" onclick="" value="" checked="checked"><label for="search_show_all">전체</label></span>
+                                            <span class="search_radio"><input type="radio" id="search_show_y" name="search_show" onclick="" value="Y" th:checked="${show_yn eq 'Y'}"><label for="search_show_y">노출</label></span>
+                                            <span class="search_radio"><input type="radio" id="search_show_n" name="search_show" onclick="" value="N" th:checked="${show_yn eq 'N'}"><label for="search_show_n">숨김</label></span>
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cont_box">
+                <div class="list_wrapper">
+                    <div class="list_info">
+                        <div class="list_count">
+                            <strong th:text="${list.size}+'개'"></strong>
+                            <span th:text="'전체 '+${academyCount}+'개'"></span>
+                        </div>
+                        <div class="btn_cont">
+                            <button type="button" class="btn btn_flat btn_white btn_delete" onclick="delBzAcademy()">선택항목 삭제</button>
+                            <button type="button" class="btn btn_flat btn_black btn_upload" onclick="location.href='/admin/content/bz_academy_edit?category=canb'">등록</button>
+                        </div>
+                    </div>
+                    <div class="table_default">
+                        <table class="table_type_a">
+                            <colgroup>
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th><span class="input_chk"><input type="checkbox" id="chk_all" onchange="allChk(this.checked)"><label for="chk_all" class="input_chk_label"></label></span></th>
+                                    <th>NO.</th>
+                                    <th>분류</th>
+                                    <th>노출여부</th>
+                                    <th>수정</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item, loop : ${list}" >
+                                    <td class="td_chk"><span class="input_chk"><input type="checkbox" th:id="|chk_list${item?.idx}|" name="chk_list" th:value="${item?.idx}"><label class="input_chk_label" th:for="|chk_list${item?.idx}|"></label></span></td>
+                                    <td class="td_num"><span th:text="${((page-1)*listSize)+loop.index+1}" class="td_txt"></span></td> 
+                                    <td class="td_detail td_txt_left"><span th:text="${item?.title}" class="td_txt"></span></td>
+                                    <td class="td_show td_10per"><span class="td_txt">노출</span></td>
+                                    <td class="td_edit"><a th:href="|./bz_academy_edit?category=canb&idx=${item?.idx}|" class="circle_btn btn_edit"></a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <th:block th:replace="/admin/common/paging_cor_cate :: inc_paging"></th:block><br>
+            </div>
+        </section>
+    </div>
+</th:block>
+
+</html>
+
+
+
+

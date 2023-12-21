@@ -1,0 +1,218 @@
+<!-- 콘텐츠관리 > Business관리 > 교육사업 관리 > 콘텐츠 사업등록/수정 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/common/layout">
+    <th:block layout:fragment="adminContent">
+        <link rel="stylesheet" href="/css/admin/sub_content.min.css">
+
+        <script>
+	        $(document).ready(function() {
+	        	$('.real_file').each(function(index,item){
+	        	    bsnsOnClickPreview(this);
+	        	  });
+	        	radioSelect();
+	        });
+        
+	        function fncSubmit()
+            {  	
+            	let title = $("#title").val();
+            	let content = $("#content").val();
+            	let file_ori1 = $("#file_ori1").val();
+	           	
+            	if(!(title != '' && title != null && title != 'undefined')){
+					alert('사업명을 입력해주세요.');
+					return;
+				}
+            	
+            	if(!(content != '' && content != null && content != 'undefined')){
+					alert('내용을 입력해주세요.');
+					return;
+				}
+            	
+            	if(!(file_ori1 != '' && file_ori1 != null && file_ori1 != 'undefined')){
+					alert('이미지/영상1을 등록해주세요.');
+					return;
+				}
+            	
+	            $.ajax({
+	                url: "/admin/content/bz_education_edit_proc",
+	                type: "POST",
+	                data: new FormData($("#fncForm")[0]),
+	                enctype: 'multipart/form-data',
+	                processData: false,
+	                contentType: false,
+	                cache: false,
+	                async: false,
+	                success: function (data) {
+	                    if(data.isSuc == "success")
+	                    {
+	                        alert(data.msg);
+	                        location.href="/admin/content/bz_education_content";
+	                    }
+	                    else
+	                    {
+	                        alert(data.msg);
+	                    }
+	                },
+	                error: function () {
+	                }
+	            });
+	        }
+        </script>
+
+        <div class="content_wrapper upload_section_wrapper sub content bz bz_edit bz_edu edu_cont">
+            <section class="section mypage_section">
+                <div class="page_breadcrumb_wrap">
+                    <span class="bc_cont depth01 home" style="width: 12px; height: 12px;">
+                        <img src="/img/admin/icon/lnb_home.png" alt="home">
+                    </span>
+                    <span class="bc_cont depth02">콘텐츠 관리</span>
+                    <span class="bc_cont depth03">Business 관리</span>
+                    <span class="bc_cont depth04">교육사업 관리</span>
+                    <span class="bc_cont depth05">콘텐츠 사업</span>
+                    <span class="bc_cont depth06">콘텐츠 사업 등록/수정</span>
+                </div>
+                <div class="section_top">
+                    <div class="tit_cont">
+                        <h3 class="page_name">콘텐츠 사업 등록/수정</h3>
+                    </div>
+                    <div class="btn_cont">
+                        <a href="/admin/content/bz_education_content" class="btn btn_white btn_back">목록</a>
+                        <button type="button" class="btn btn_black" onclick="fncSubmit()">저장</button>
+                    </div>
+                </div>
+                <form id="fncForm" name="fncForm" method="post" enctype="multipart/form-data">
+                <div class="cont_box">
+                    <div class="input_list_wrap mypage_inner_wrap">
+                        <dl>
+                            <dt class="list_tit">사업명</dt>
+                            <dd class="list_cont">
+                                <input type="text" id="title" class="business_name" name="title" th:value="${item?.title}" placeholder="사업명을 입력해주세요.">
+                                <input type="hidden" id="idx" name="idx" th:value="${item?.idx}">
+                                <input type="hidden" id="edu_category" name="edu_category" value="2">
+                            </dd>
+                        </dl>
+
+                        <dl class="input_long_ver">
+                            <dt class="list_sub_tit">내용</dt>
+                            <dd class="list_cont">
+                                <div class="textarea_box">
+                                    <textarea name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요." th:utext="${item?.content}"></textarea>
+                                    <p class="txt_file_noti_right txt_cnt">(0/100)</p>
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl class="input_long_ver dl_add cont_add_ver">
+                            <dt class="list_tit">이미지/영상 1</dt>
+                            <dd class="list_cont">
+                                <div class="img_preview_wrap bsns_input_wrap">
+                                    <div class="input_file">
+                                        <input type="text" id="file_ori1" name="file_ori1" class="input_file_box" th:value="${item?.img_file_ori1}" placeholder="이미지를 등록해주세요.">
+                                        <div class="del_btn"><span></span></div>
+                                        <input type="file" id="file1" class="real_file file_input file_input" name="img_file1" onchange="bsnsOnClickPreview(this);" onclick="this.value=null;" accept=".gif, .jpg, .jpeg, .png, .webp" data-limit="10mb">
+                                        <label class="circle_btn" for="img"><img src="/img/admin/icon/file_upload.png" width="14" alt="첨부파일 업로드"></label>
+                                    </div>
+                                    <div class="img_preview_box">
+                                        <img id="" class="preview_img" name="preview" th:src="${item?.img_file1}">
+                                    </div>
+                                    <p class="file_noti">*권장 이미지 : 000 x 000 / jpg, png, webp</p>
+                                    <p class="file_noti">*이미지 또는 영상은 최대 3개까지 등록할 수 있습니다.</p>
+                                </div>
+                            </dd>
+                            <button type="button" class="btn btn_black btn_cont_add ko" onclick="bzContAdd()">+ 이미지/영상 추가</button>
+                        </dl>
+                        
+						<dl th:if="${item?.img_file2 != '' && item != null}" class="input_long_ver dl_add radio_select_ver">
+						    <dt class="list_tit">이미지/영상 2</dt>
+						    <dd class="list_cont">
+						        <div class="input_radio_wrap">
+							        <label for="imgShow02">이미지
+								        <input type="radio" id="imgShow02" name="contShow02" class="radio-button" value="img" th:checked="${item?.type2=='img'}">
+								        <span class="custom-radio"></span>
+							        </label>
+							        <label for="videoShow02">영상(임베드 링크)
+								        <input type="radio" id="videoShow02" name="contShow02" class="radio-button" value="video" th:checked="${item?.type2=='video'}">
+								        <span class="custom-radio"></span>
+							        </label>
+						        </div>
+						        <div class="cont_wrap">
+						            <div class="cont_inner cont_img img_preview_wrap bsns_input_wrap" th:classappend="${item?.type2=='img' ? 'on' : ''}">
+						                <div class="input_file">
+						                	<input type="text" id="file_ori2" name="file_ori2" class="input_file_box" th:value="${item?.type2=='img' ? item?.img_file_ori2 : ''}" placeholder="이미지를 등록해주세요.">
+						                    <div class="del_btn dn">
+						                    	<span></span>
+						                    </div>
+						                    <input type="file" id="file2" class="real_file file_input file_input" name="img_file2" onchange="bsnsOnClickPreview(this);" onclick="this.value=null;" accept=".gif, .jpg, .jpeg, .png, .webp" data-limit="10mb">
+						                    <label class="circle_btn" for="img">
+						                    	<img src="/img/admin/icon/file_upload.png" width="14" alt="첨부파일 업로드">
+						                    </label>
+						                </div>
+						                <div class="img_preview_box"><img id="" class="preview_img" name="preview" th:src="${item?.type2=='img' ? item?.img_file2 : ''}" style="display: none;"></div>
+						            </div>
+						            <div class="cont_inner cont_video" th:classappend="${item?.type2=='video' ? 'on' : ''}">
+						                <div class="textarea_box">
+						                	<textarea name="vimeo2" id="vimeo2" cols="30" rows="10" data-reg="비메오 임베드 코드를 입력하세요." placeholder="비메오 임베드 코드를 입력하세요." th:text="${item?.type2=='video' ? item?.img_file2 : ''}"></textarea>
+						                </div>
+						            </div>
+						        </div>
+						    </dd>
+						</dl>
+						
+						<dl th:if="${item?.img_file3 != '' && item != null}" class="input_long_ver dl_add radio_select_ver">
+						    <dt class="list_tit">이미지/영상 3</dt>
+						    <dd class="list_cont">
+						        <div class="input_radio_wrap">
+						        <label for="imgShow03">이미지
+							        <input type="radio" id="imgShow03" name="contShow03" class="radio-button" value="img" th:checked="${item?.type3=='img'}">
+							        <span class="custom-radio"></span>
+						        </label>
+						        <label for="videoShow03">영상(임베드 링크)
+							        <input type="radio" id="videoShow03" name="contShow03" class="radio-button" value="video" th:checked="${item?.type3=='video'}">
+							        <span class="custom-radio"></span>
+						        </label>
+						        </div>
+						        <div class="cont_wrap">
+						            <div class="cont_inner cont_img img_preview_wrap bsns_input_wrap" th:classappend="${item?.type3=='img' ? 'on' : ''}">
+						                <div class="input_file">
+						                	<input type="text" id="file_ori3" name="file_ori3" class="input_file_box" th:value="${item?.type3=='img' ? item?.img_file_ori3 : ''}" placeholder="이미지를 등록해주세요.">
+						                    <div class="del_btn dn">
+						                    	<span></span>
+						                    </div>
+						                    <input type="file" id="file3" class="real_file file_input file_input" name="img_file3" onchange="bsnsOnClickPreview(this);" onclick="this.value=null;" accept=".gif, .jpg, .jpeg, .png, .webp" data-limit="10mb">
+						                    <label class="circle_btn" for="img">
+						                    	<img src="/img/admin/icon/file_upload.png" width="14" alt="첨부파일 업로드">
+					                    	</label>
+						                </div>
+						                <div class="img_preview_box"><img id="" class="preview_img" name="preview" th:src="${item?.type3=='img' ? item?.img_file3 : ''}" style="display: none;"></div>
+						            </div>
+						            <div class="cont_inner cont_video" th:classappend="${item?.type3=='video' ? 'on' : ''}">
+						                <div class="textarea_box">
+							                <textarea name="vimeo3" id="vimeo3" cols="30" rows="10" data-reg="비메오 임베드 코드를 입력하세요." placeholder="비메오 임베드 코드를 입력하세요." th:text="${item?.type3=='video' ? item?.img_file3 : ''}"></textarea>
+						                </div>
+						            </div>
+						        </div>
+						    </dd>
+						</dl>						
+						
+                        <dl class="use_box txt_on_off">
+                            <dt class="list_tit">노출 여부</dt>
+                            <dd class="list_cont"> 
+                                <label for="show01">노출
+                                    <input type="radio" id="show01" name="show_yn" class="radio-button" value="Y" th:checked="${item} ? ${item?.show_yn == 'Y'} : true">
+                                    <span class="custom-radio"></span>
+                                </label>
+
+                                <label for="show02">숨김
+                                    <input type="radio" id="show02" name="show_yn" class="radio-button" value="N" th:checked="${item?.show_yn == 'N'}">
+                                    <span class="custom-radio"></span>
+                                </label>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                </form>
+            </section>
+        </div>
+    </th:block>
+ 
+</html>
+

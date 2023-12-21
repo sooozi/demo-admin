@@ -1,0 +1,130 @@
+<!-- 콘텐츠관리 > bi 관리 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/common/layout">
+    <th:block layout:fragment="adminContent">
+        <link rel="stylesheet" href="/css/admin/sub_content.min.css">
+
+		<script>
+			$(document).ready(function() {
+	        	$('.real_file').each(function(index,item){
+	        		biOnClickPreview(this);
+	        	  });
+	        });
+
+            function fncSubmit()
+            {
+	            $.ajax({
+	                url: "/admin/content/bi_proc",
+	                type: "POST",
+	                data: new FormData($("#fncForm")[0]),
+	                enctype: 'multipart/form-data',
+	                processData: false,
+	                contentType: false,
+	                cache: false,
+	                async: false,
+	                success: function (data) {
+	                   // console.log(data);
+	                    if(data.isSuc == "success")
+	                    {
+	                        alert(data.msg)
+	                        location.reload();
+	                    }
+	                    else
+	                    {
+	                        alert(data.msg);
+	                    }
+	                },
+	                error: function () {
+	                }
+	            });
+        	}
+        </script>
+
+        <div class="content_wrapper upload_section_wrapper sub content bi">
+            <section class="section mypage_section">
+                <div class="page_breadcrumb_wrap">
+                    <span class="bc_cont depth01 home" style="width: 12px; height: 12px;">
+                        <img src="/img/admin/icon/lnb_home.png" alt="home">
+                    </span>
+                    <span class="bc_cont depth02">콘텐츠 관리</span>
+                    <span class="bc_cont depth03">BI 관리</span>
+                </div>
+                <div class="section_top">
+                    <div class="tit_cont">
+                        <h3 class="page_name">BI 관리</h3>
+                    </div>
+                    <div class="btn_cont">
+                        <!-- <a href="/admin/recruit/corporation" class="btn btn_white btn_back">목록</a> -->
+                        <button type="button" class="btn btn_black" onclick="fncSubmit()">저장</button>
+                    </div>
+                </div>
+                <div class="cont_box">
+	                <form id="fncForm" name="fncForm" method="post" enctype="multipart/form-data">
+	                    <div class="input_list_wrap mypage_inner_wrap">
+	
+	                        <dl class="input_long_ver no_flex"><!-- //추가 BI 다운로드 파일 -->
+								<dt class="list_tit">
+									다운로드 파일
+									<span class="small_txt">*파일은 jpg, png, zip 파일 형식으로 업로드, 10MB 제한</span>
+								</dt>
+	                            <dd class="list_cont">
+	                                <div class="img_preview_wrap bi_input_wrap n01">
+	                                    <input type="text" id="bi_title1" class="bi_name" name="bi_title1" placeholder="다운로드 버튼명을 입력해주세요." th:value="${item?.bi_title1}">
+	                                    <div class="input_file">
+	                                        <input type="text" id="bi_file_ori1" name="bi_file_ori1" class="input_file_box" th:value="${item?.bi_file_ori1}" placeholder="이곳에 파일을 업로드 해주세요.">
+	                                        <div class="del_btn" th:classappend="${item.bi_file_ori1 == ''} ? 'dn' : ''"><span></span></div>
+	                                        <input type="file" id="bi_file1" class="real_file file_input file_input" name="bi_file1" onchange="biOnClickPreview(this);" onclick="this.value=null;" accept=".jpg, .jpeg, .png, .zip" data-limit="10mb">
+	                                        <label class="circle_btn" for="img"><img src="/img/admin/icon/file_upload.png" width="14" alt="첨부파일 업로드"></label>
+	                                    </div>
+										<div class="img_preview_box dis-no">
+											<img id="preview" class="preview_img" name="preview" th:src="${item?.bi_file1}">
+										</div>
+	                                </div>
+	                                <div class="img_preview_wrap bi_input_wrap n02">
+	                                    <input type="text" id="bi_title2" class="bi_name" name="bi_title2" placeholder="다운로드 버튼명을 입력해주세요." th:value="${item?.bi_title2}">
+	                                    <div class="input_file">
+	                                        <input type="text" id="bi_file_ori2" name="bi_file_ori2" class="input_file_box" placeholder="이곳에 파일을 업로드 해주세요." th:value="${item?.bi_file_ori2}">
+	                                        <div class="del_btn" th:classappend="${item.bi_file_ori1 == ''} ? 'dn' : ''"><span></span></div>
+	                                        <input type="file" id="bi_file2" class="real_file file_input file_input" name="bi_file2" onchange="biOnClickPreview(this);" onclick="this.value=null;" accept=".jpg, .jpeg, .png, .zip" data-limit="10mb">
+	                                        <label class="circle_btn" for="img"><img src="/img/admin/icon/file_upload.png" width="14" alt="첨부파일 업로드"></label>
+	                                    </div>
+										<div class="img_preview_box dis-no">
+											<img id="preview" class="preview_img" name="preview" th:src="${item?.bi_file2}">
+										</div>
+	                                </div>
+	                                <div class="img_preview_wrap bi_input_wrap n03">
+	                                    <input type="text" id="bi_title3" class="bi_name" name="bi_title3" placeholder="다운로드 버튼명을 입력해주세요." th:value="${item?.bi_title3}"> 
+	                                    <div class="input_file">
+	                                        <input type="text" id="bi_file_ori3" name="bi_file_ori3" class="input_file_box" placeholder="이곳에 파일을 업로드 해주세요." th:value="${item?.bi_file_ori3}">
+	                                        <div class="del_btn" th:classappend="${item.bi_file_ori3 == ''} ? 'dn' : ''"><span></span></div>
+	                                        <input type="file" id="bi_file3" class="real_file file_input file_input" name="bi_file3" onchange="biOnClickPreview(this);" onclick="this.value=null;" accept=".jpg, .jpeg, .png, .zip" data-limit="10mb">
+	                                        <label class="circle_btn" for="img"><img src="/img/admin/icon/file_upload.png" width="14" alt="첨부파일 업로드"></label>
+	                                    </div>
+										<div class="img_preview_box dis-no">
+											<img id="preview" class="preview_img" name="preview" th:src="${item?.bi_file2}">
+										</div>
+	                                </div>
+	                                <div class="img_preview_wrap bi_input_wrap n04">
+	                                    <input type="text" id="bi_title4" class="bi_name" name="bi_title4" placeholder="다운로드 버튼명을 입력해주세요." th:value="${item?.bi_title4}">
+	                                    <div class="input_file">
+	                                        <input type="text" id="bi_file_ori4" name="bi_file_ori4" class="input_file_box" placeholder="이곳에 파일을 업로드 해주세요." th:value="${item?.bi_file_ori4}">
+	                                        <div class="del_btn" th:classappend="${item.bi_file_ori1 == ''} ? 'dn' : ''"><span></span></div>
+	                                        <input type="file" id="bi_file4" class="real_file file_input file_input" name="bi_file4" onchange="biOnClickPreview(this);" onclick="this.value=null;" accept=".jpg, .jpeg, .png, .zip" data-limit="10mb">
+	                                        <label class="circle_btn" for="img"><img src="/img/admin/icon/file_upload.png" width="14" alt="첨부파일 업로드"></label>
+	                                    </div>
+										<div class="img_preview_box dis-no">
+											<img id="preview" class="preview_img" name="preview" th:src="${item?.bi_file2}">
+										</div>
+	                                </div>
+	
+	                            </dd>
+	                        </dl>
+	                    </div>
+	                </form>
+                </div>
+            </section>
+        </div>
+    </th:block>
+ 
+</html>
+

@@ -1,0 +1,263 @@
+<!-- 콘텐츠관리 > 뉴스 관리 리스트 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/common/layout">
+    <th:block layout:fragment="adminContent">
+        <link rel="stylesheet" href="/css/admin/sub_content.min.css">
+
+<script>        
+        $(document).ready(function() {
+            $("select").niceSelect();
+            
+            let pre_chk_idx_arr = "";
+            let pre_chk_sort_arr = "";
+            
+            // drag & drop
+            $("#sortable").sortable({
+                start: function(event, ui) {
+                	pre_chk_idx_arr = "";
+                	pre_chk_sort_arr = "";
+                	
+                	$('[name=chk_list]').each(function(){
+                		pre_chk_idx_arr += $(this).val().trim()+"|";
+                    })
+                    $('.sort').each(function(){
+                    	pre_chk_sort_arr += $(this).text().trim()+"|";
+                    })
+                },
+              	stop:function(event, ui){ /* 드랍 시 반응 제어 */
+
+              		var chk_idx_arr = "";
+              		var chk_sort_arr = "";
+              		
+                    $('[name=chk_list]').each(function(){
+                        chk_idx_arr += $(this).val().trim()+"|";
+                    })
+                    $('.sort').each(function(){
+                        chk_sort_arr += $(this).text().trim()+"|";
+                    })
+                    
+					if(pre_chk_sort_arr == chk_sort_arr){
+						return;
+					}
+                    
+                    $.ajax({
+                        type : "POST",
+                        url : "/admin/content/chg_news",
+                        dataType : "text",
+                        data : {
+                        	chk_idx_arr  : chk_idx_arr,
+                        	chk_sort_arr : chk_sort_arr
+                        },
+                        error : function() {
+                            console.log("AJAX ERROR");
+                        },
+                        success : function(data) {
+                            var result = JSON.parse(data);
+                            alert(result.msg);
+                            if (result.isSuc =='success') {
+                                location.reload();
+                            }
+                        }
+                    });
+              	}
+            }).disableSelection();
+        });
+        
+        function EnterKeyCheck(e){
+			let code = event.keyCode;
+			if(code == 13){
+				goSearch();
+			}
+        }
+
+        function EnterKeyCheck(e){
+			let code = event.keyCode;
+			if(code == 13){
+				goSearch();
+			}
+        }
+        
+        function delNews(){
+            var chk_idx_arr = "";
+            $('[name=chk_list]').each(function(){
+                if ($(this).prop('checked')==true )
+                {
+                    chk_idx_arr += $(this).val()+"|";
+                }
+            })
+
+            if(chk_idx_arr == ""){
+            	alert('체크된 법인/브랜드가 없습니다.');
+            	return;
+            }
+        	
+        	if(!confirm("정말 삭제하시겠습니까?"))
+            {
+                return;
+            }
+            
+            $.ajax({
+                type : "POST",
+                url : "/admin/content/delNews",
+                dataType : "text",
+                data :
+                    {
+                        chk_idx_arr : chk_idx_arr
+                    },
+                error : function()
+                {
+                    console.log("AJAX ERROR");
+                },
+                success : function(data)
+                {
+                   // console.log(data);
+                    var result = JSON.parse(data);
+                    alert(result.msg);
+                    if (result.isSuc =='success')
+                    {
+                        location.reload();
+                    }
+                }
+            });
+        }        
+        </script>
+
+        <div class="content_wrapper upload_section_wrapper sub news news_list">
+            <section class="section admin_section">
+                <div class="page_breadcrumb_wrap">
+                    <span class="bc_cont depth01 home" style="width: 12px; height: 12px;">
+                        <img src="/img/admin/icon/lnb_home.png" alt="home">
+                    </span>
+                    <span class="bc_cont depth02">콘텐츠 관리</span>
+                    <span class="bc_cont depth03">News 관리</span>
+                </div>
+                <!-- //page_breadcrumb_wrap -->
+
+                <div class="section_top">
+                    <div class="tit_cont">
+                        <h3 class="page_name">News 관리 리스트</h3>
+                    </div>
+                    <div class="btn_cont">
+                        <!-- <div class="select_wrap">
+                            <span class="select_shadow">
+                                <select name="" class="job_category">
+                                    <option value="0">직무 카테고리 선택</option>
+                                    <option value="1">IT</option>
+                                    <option value="2">교육사업</option>
+                                    <option value="3">마케팅</option>
+                                    <option value="4">IT</option>
+                                    <option value="5">교육사업</option>
+                                    <option value="6">마케팅</option>
+                                </select>
+                            </span>
+                        </div> -->
+                        <div class="list_search popup_ver">
+                            <div class="search_box">
+                                <div class="search_input">
+                                    <input type="search" title="리스트 검색" placeholder="여기에 검색어를 입력하세요." id="search_name" name="search_name" onkeyup="EnterKeyCheck(this)" th:value="${search_name}">
+                                    <button type="button" class="search_detail_btn">검색조건 열기</button>
+                                </div>
+                                <button type="button" class="search_btn" onclick="goSearch()"></button>
+                            </div>
+                            <div class="popup_detail popup_detail_nonborder list_search_detail muPopup_content" style="">
+                                <form>
+                                    <dl>
+                                        <dt>노출 여부</dt>
+                                        <dd>
+                                            <div class="input_radio_wrap">
+                                            	<span class="search_radio"><input type="radio" id="search_show_all" name="search_show" onclick="" value="" checked="checked"><label for="search_show_all">전체</label></span>
+                                                <span class="search_radio"><input type="radio" id="search_show_y" name="search_show" onclick="" value="Y" th:checked="${show_yn eq 'Y'}"><label for="search_show_y">노출</label></span>
+                                                <span class="search_radio"><input type="radio" id="search_show_n" name="search_show" onclick="" value="N" th:checked="${show_yn eq 'N'}"><label for="search_show_n">숨김</label></span>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cont_box">
+                    <div class="list_wrapper">
+                        <div class="list_info">
+                            <div class="list_count">
+                                <strong th:text="${list.size}+'개'"></strong>
+                                <span th:text="'전체 '+${newsCount}+'개'"></span>
+                            </div>
+                            <div class="btn_cont">
+                                <button type="button" class="btn btn_flat btn_white btn_delete" onclick="delNews()">선택항목 삭제</button>
+                                <a href="./news_edit" class="btn btn_flat btn_black btn_upload">등록</a>                        
+                            </div>
+                        </div>
+                        <div id="sortable" class="table_default drag_drop_ver">
+                            <table class="table_type_a">
+                                <colgroup>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>순서</th>
+                                        <th><span class="input_chk"><input type="checkbox" id="chk_all" onchange="allChk(this.checked)"><label for="chk_all" class="input_chk_label"></label></span></th>
+                                        <th>NO.</th>
+                                        <th>제목</th>
+                                        <th>조회수</th>
+                                        <th>등록일</th>
+                                        <th>노출여부</th>
+                                        <th>작성자</th>
+                                        <th>수정</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- *********************** 상단 고정 있는 버전_김수지 *********************** -->
+<!--                                     <tr class="dep1_list"> -->
+<!--                                         <td class="td_drag sort_handle"><img src="/img/admin/icon/icon_menu_dark.png" alt="icon_line"></td>  -->
+<!--                                         <td class="td_chk"><span class="input_chk"><input type="checkbox" id="" name="chk_list"><label class="input_chk_label" for=""></label></span></td> -->
+<!--                                         <td class="td_num"><span class="td_txt">25</span></td>  -->
+<!--                                         <td class="td_tit td_35per"> -->
+<!--                                             <div class="top_fixed_wrap"> -->
+<!--                                                 <span class="btn_top_fixed">상단 고정</span> -->
+<!--                                                 <span class="td_txt">POLY 출범24년, 브랜드리뉴얼발표</span> -->
+<!--                                             </div> -->
+<!--                                         </td> -->
+<!--                                         <td class="td_view_num td_5per"><span class="td_txt">53</span></td> -->
+<!--                                         <td class="td_resdate td_15per"><span class="td_txt">2022-11-05</span></td> -->
+<!--                                         <td class="td_show td_10per"><span class="td_txt">노출</span></td> -->
+<!--                                         <td class="td_name td_10per"><span class="td_txt">admin</span></td> -->
+<!--                                         <td class="td_edit"><a href="./news_edit" class="circle_btn btn_edit"></a></td> -->
+<!--                                     </tr> -->
+                                    <!-- *********************** 상단 고정 없는 버전 - 해당 td에 no_top_fixed 추가 부탁드립니다_김수지 *********************** -->
+                                    <tr th:each="item, loop : ${list}" class="dep1_list">
+                                        <td class="td_drag sort_handle"><img src="/img/admin/icon/icon_menu_dark.png" alt="icon_line"></td> 
+                                        <td class="td_chk"><span class="input_chk"><input type="checkbox" th:id="'chk_list'+${item?.idx}" name="chk_list" th:value="${item.idx}"><label class="input_chk_label" th:for="'chk_list'+${item?.idx}"></label></span></td>
+                                        <td class="td_num"><span th:text="${((page-1)*listSize)+loop.index+1}" class="td_txt sort">25</span></td> 
+                                        <td class="td_tit td_35per" th:classappend="${item?.fix_yn.equals('Y')} ? '' : 'no_top_fixed'">
+                                            <div class="top_fixed_wrap">
+                                                <span class="btn_top_fixed">상단 고정</span>
+                                                <span th:text=${item?.title} class="td_txt">POLY 출범24년, 브랜드리뉴얼발표</span>
+                                            </div>
+                                        </td>
+                                        <td class="td_view_num td_5per"><span th:text="${item?.views}" class="td_txt">53</span></td>
+                                        <td class="td_resdate td_15per"><span th:text="${item?.submit_date}" class="td_txt">2022-11-05</span></td>
+                                        <td class="td_show td_10per"><span th:if="${item?.show_yn == 'Y'}" th:text="노출" class="td_txt">노출</span> <span th:if="${item?.show_yn == 'N'}" th:text="숨김" class="td_txt">숨김</span></td>
+                                        <td class="td_name td_10per"><span th:text="${item?.submit_user}" class="td_txt">admin</span></td>
+                                        <td class="td_edit"><a th:href="'./news_edit?idx='+${item?.idx}" class="circle_btn btn_edit"></a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <th:block th:replace="/admin/common/paging_cor_cate :: inc_paging"></th:block><br>
+                </div>
+
+            </section>
+            
+        </div>
+
+        
+
+    </th:block>
+</html>
+
+
+
+

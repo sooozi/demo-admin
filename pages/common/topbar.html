@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+    <div class="container_top f_b" th:fragment="topBar(depth1)" th:with="depth2=${depth2} ?: '', depth3=${depth3} ?: ''">
+
+        <div class="top_left">
+            <!-- <h2 class="main_title font-handel">m-cms smart work</h2> -->
+            <h2 class="header_logo">
+                <!-- <img src="/img/admin/layout/poly_logo_small.png" alt="logo"> -->
+            </h2>
+        </div>
+        <div class="top_right">
+            <div class="select_shadow">
+                <span class="user_menu">POLYadmin01</span>
+                <ul class="user_menu_list">
+                    <li><a href="/admin/mypage">마이페이지</a></li>
+                    <li><a href="/admin/user/logout">로그아웃</a></li>
+                </ul>
+                <!-- <span class="select_shadow">
+                    <select name="" id="month">
+                        <option value=""><a href="/mypage/mypage">마이페이지</a></option>
+                        <option value="">로그아웃</option>
+                    </select>
+                </span> -->
+            </div>
+        </div>
+
+        <div class="dis-no">
+            <!-- <ul class="page_breadcrumb">
+                <li><img src="/img/admin/layout/breadcrumb_icon_home.png" alt="홈" width="12"></li>
+                <li th:text="${depth1}">1뎁스 타이틀</li>
+                <li th:if="${depth2} != ''" th:text="${depth2}">2뎁스 타이틀</li>
+                <li th:if="${depth3} != ''" th:text="${depth3}">3뎁스 타이틀</li>
+            </ul>
+            <div class="container_search">
+                <ul class="select_language">
+                    <li>KOR</li>
+                </ul>
+                <form>
+                    <div class="search_box">
+                        <input type="search" name="" placeholder="search">
+                        <button type="submit" class="search_btn"></button>
+                    </div>
+                </form>
+                <div class="member_menu">
+                    <a href="">musign</a>
+                    <ul>
+                        <li><a href="">메뉴1</a></li>
+                        <li><a href="">메뉴2</a></li>
+                        <li><a href="">메뉴3</a></li>
+                    </ul>
+                </div>
+            </div> -->
+        </div>
+        <script>
+            // user account dropbox
+            // var niceSelect = NiceSelect.bind(
+            //     document.querySelector('#month'), {
+            //         searchable: false,
+            //         placeholder: 'POLYadmin01'
+            //     }
+            // );
+        </script>
+
+    </div>
+</html>

@@ -1,0 +1,373 @@
+<!-- 콘텐츠관리 > 연혁 관리 > 연혁 등록/수정 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="admin/common/layout">
+<th:block layout:fragment="adminContent">
+	<link rel="stylesheet" href="/css/admin/sub_content.min.css">
+
+	<script>
+		$(document).ready(function() {
+		    $("select").niceSelect();
+	
+		    $('.sort_handle').removeClass("dis-no"); // 첫번째 sort_handle 보이기
+		    $('.td_drag').addClass("sort_handle");
+		    $('.td_drag').removeClass("opc_0");
+		});
+		
+		function fncSubmit()
+	    {
+			let content_chk = false; 
+			
+			//국문내용
+			var content_ko_arr = "";
+		    $("textarea[name=content_ko]").each(function(){
+		    	if(!($(this).val() != '' && $(this).val() != null && $(this).val() != 'undefined')){
+		    		alert('국문 내용을 입력하세요.');
+		    		content_chk = true;
+		    		return;	
+		    	}
+		    	content_ko_arr += $(this).val() + '|';
+		    });
+		    $("#content_ko_arr").val(content_ko_arr);
+		    //국문 해시태그
+		    var hashtag_ko_arr = "";
+		    $("input[name=hashtag_ko]").each(function(){
+		    	if(this.classList.length > 0 && hashtag_ko_arr != "") {
+		    		hashtag_ko_arr += '|' + $(this).val() + '|'	
+		    	}else {
+			    	hashtag_ko_arr += $(this).val() + '|';	
+		    	}
+		    });
+		    $("#hashtag_ko_arr").val(hashtag_ko_arr);
+		    //국문 노출여부
+		    var show_yn_ko_arr = "";	    
+		    for(i=1;i<=10;i++){ //연혁 최대 10개
+		    	let show_yn = $('input:radio[name="ko_show_yn'+i+'"]:checked').val();
+		    	if((show_yn != '' && show_yn != null && show_yn != 'undefined')){
+		    		show_yn_ko_arr += show_yn + '|';	
+		    	}
+		    }
+		    $("#show_yn_ko_arr").val(show_yn_ko_arr);
+		    
+		    if(content_chk){
+		    	return;
+		    }
+		    
+		    //영문 내용
+		    var content_en_arr = "";
+		    $("textarea[name=content_en]").each(function(){
+		    	if(!($(this).val() != '' && $(this).val() != null && $(this).val() != 'undefined')){
+		    		alert('영문 내용을 입력하세요.');
+		    		content_chk = true;
+		    		return;	
+		    	}
+		    	content_en_arr += $(this).val() + '|';
+		    });
+		    $("#content_en_arr").val(content_en_arr);
+		    //영문 해시태그
+		    var hashtag_en_arr = "";
+		    $("input[name=hashtag_en]").each(function(){
+		    	if(this.classList.length > 0 && hashtag_en_arr != "") {
+		    		hashtag_en_arr += '|' + $(this).val() + '|'	
+		    	}else {
+		    		hashtag_en_arr += $(this).val() + '|';	
+		    	}
+		    });
+		    $("#hashtag_en_arr").val(hashtag_en_arr);
+		    //영문 노출여부
+		    var show_yn_en_arr = "";
+		    for(i=1;i<=10;i++){ //연혁 최대 10개
+		    	let show_yn = $('input:radio[name="en_show_yn'+i+'"]:checked').val();
+		    	if((show_yn != '' && show_yn != null && show_yn != 'undefined')){
+		    		show_yn_en_arr += show_yn + '|';	
+		    	}	    	
+		    }
+		    $("#show_yn_en_arr").val(show_yn_en_arr);
+		    
+		    if(content_chk){
+		    	return;
+		    }
+		    
+	        $.ajax({
+	            url: "/admin/content/history_edit_proc",
+	            type: "POST",
+	            data: new FormData($("#fncForm")[0]),
+	            enctype: 'multipart/form-data',
+	            processData: false,
+	            contentType: false,
+	            cache: false,
+	            async: false,
+	            success: function (data) {
+	                if(data.isSuc == "success")
+	                {
+	                    alert(data.msg);
+	                    location.href="/admin/content/history";
+	                }
+	                else
+	                {
+	                    alert(data.msg);
+	                }
+	            },
+	            error: function () {
+	            }
+	        });
+		}	
+	</script>
+
+	<div
+		class="content_wrapper upload_section_wrapper sub content history_edit">
+		<section class="section mypage_section">
+			<div class="page_breadcrumb_wrap">
+				<span class="bc_cont depth01 home"
+					style="width: 12px; height: 12px;"> 
+					<img src="/img/admin/icon/lnb_home.png" alt="home">
+				</span> <span class="bc_cont depth02">콘텐츠관리</span> <span
+					class="bc_cont depth03">History 관리</span> <span
+					class="bc_cont depth04">History 등록/수정</span>
+			</div>
+			<div class="section_top">
+				<div class="tit_cont">
+					<h3 class="page_name">History 등록/수정</h3>
+				</div>
+				<div class="btn_cont">
+					<a href="/admin/content/history" class="btn btn_white btn_back">목록</a>
+					<button type="button" class="btn btn_black" onclick="fncSubmit()">저장</button>
+				</div>
+			</div>
+			<div id="sortable" class="cont_list">
+				<form id="fncForm" name="fncForm" method="post" enctype="multipart/form-data">
+				<input type="hidden" id="content_ko_arr" name="content_ko_arr">
+				<input type="hidden" id="hashtag_ko_arr" name="hashtag_ko_arr">
+				<input type="hidden" id="show_yn_ko_arr" name="show_yn_ko_arr">
+				<input type="hidden" id="content_en_arr" name="content_en_arr">
+				<input type="hidden" id="hashtag_en_arr" name="hashtag_en_arr">
+				<input type="hidden" id="show_yn_en_arr" name="show_yn_en_arr">
+					<div class="top_year input_list_wrap">
+						<dl>
+							<dt class="list_sub_tit">연도</dt>
+							<dd class="list_cont">
+								<input th:class="${year != ''} ? 'no_edit' : ''" type="text" id="year" name="year" th:value="${year}">
+								<input type="hidden" id="year1" name="year1" th:value="${year}">
+								<button type="button" class="btn btn_black"
+									onclick="yearHistoryAdd()">연혁 추가</button>
+							</dd>
+						</dl>
+					</div>
+<!-- 					수정 -->
+					<th:block th:if="${year != null}">
+						<div th:each="item, loop : ${list}" class="cont_box dep1_list">
+							<button type="button" class="btn_close"><img src="/img/icon/icon_close.png" alt="close" onclick="closeDep1List(this)"></button>
+							<div class="input_list_wrap">
+								<div class="td_drag opc_0">
+									<img src="/img/admin/icon/icon_menu_dark.png" alt="icon_line">
+								</div>
+								<div class="history_box ko_ver">
+									<dl class="input_long_ver">
+										<dt class="list_sub_tit">국문 내용</dt>
+										<dd class="list_cont">
+											<div class="textarea_box">
+												<textarea name="content_ko" id="" cols="30" rows="10"
+													placeholder="내용을 입력해주세요." th:text="${item?.content_ko}"></textarea>
+											</div>
+										</dd>
+									</dl>
+									<dl class="input_hashtag_wrap">
+										<dt class="list_sub_tit">국문 해시태그</dt>
+										<dd class="list_cont">		
+										<th:block th:if="${#strings.listSplit(item?.hashtag_ko, '|')}">								
+											<div id="hashtag_first" class="hashtag_wrap f_c" th:each="hashtag_ko : ${#strings.listSplit(item?.hashtag_ko, '|')}">
+												<span>#</span>
+												<div class="input_hashtag_box">
+													<input type="text" id="hashtag" name="hashtag_ko" th:value="${hashtag_ko}"
+														th:class="${hashtag_koStat.index == 0} ? 'first' : ''"
+														placeholder="입력해주세요.">
+												<button th:if="${hashtag_koStat.index != 0}" type="button" class="cancleBtn btn" onClick="onClickDelete()"></button>	
+												</div>
+												<button th:if="${hashtag_koStat.index == 0}" type="button" class="btn btn_black hash_btn ko"
+													onclick="historyHashtagAdd()">추가</button>		
+											</div>	
+										</th:block>		
+										<th:block th:if="${#strings.listSplit(item?.hashtag_ko, '|').size == 0}">
+											<div id="hashtag_first" class="hashtag_wrap f_c">
+												<span>#</span>
+												<div class="input_hashtag_box">
+													<input type="text" id="hashtag" name="hashtag_ko" value=""
+														class="first"
+														placeholder="입력해주세요.">	
+												</div>
+												<button type="button" class="btn btn_black hash_btn ko"
+													onclick="historyHashtagAdd()">추가</button>		
+											</div>	
+										</th:block>								
+										</dd>
+									</dl>
+									<dl class="use_box txt_on_off">
+										<dt class="list_tit">국문 노출여부</dt>
+										<dd class="list_cont">
+											<label th:for="'ko_show_y'+${loop.index+1}">노출 <input
+												type="radio" th:id="'ko_show_y'+${loop.index+1}" value="Y"
+												th:name="'ko_show_yn'+${loop.index+1}" class="radio-button"
+												th:checked="${item?.show_yn_ko == 'Y'}" /> <span class="custom-radio"></span>
+											</label> 
+											<label th:for="'ko_show_n'+${loop.index+1}">숨김 <input
+												type="radio" th:id="'ko_show_n'+${loop.index+1}" value="N"
+												th:name="'ko_show_yn'+${loop.index+1}" class="radio-button"
+												th:checked="${item?.show_yn_ko == 'N'}" /> <span class="custom-radio"></span>
+											</label>
+										</dd>
+									</dl>
+								</div>
+								<div class="history_box en_ver">
+									<dl class="input_long_ver">
+										<dt class="list_sub_tit">영문 내용</dt>
+										<dd class="list_cont">
+											<div class="textarea_box">
+												<textarea name="content_en" id="" cols="30" rows="10"
+													placeholder="내용을 입력해주세요." th:text="${item?.content_en}"></textarea>
+											</div>
+										</dd>
+									</dl>
+									<dl class="input_hashtag_wrap">
+										<dt class="list_sub_tit">영문 해시태그</dt>
+										<dd class="list_cont">
+										<th:block th:if="${#strings.listSplit(item?.hashtag_en, '|')}">			
+											<div id="hashtag_first" class="hashtag_wrap f_c" th:each="hashtag_en : ${#strings.listSplit(item?.hashtag_en, '|')}">
+												<span>#</span>
+												<div class="input_hashtag_box">
+													<input type="text" id="hashtag" name="hashtag_en" th:value="${hashtag_en}"
+														th:class="${hashtag_enStat.index == 0} ? 'first' : ''" 
+														placeholder="입력해주세요.">
+													<button th:if="${hashtag_enStat.index != 0}" type="button" class="cancleBtn btn" onClick="onClickDelete()"></button>	
+												</div>
+												<button th:if="${hashtag_enStat.index == 0}" type="button" class="btn btn_black hash_btn en"
+													onclick="historyHashtagAdd()">추가</button>
+											</div>	
+										</th:block>
+										<th:block th:if="${#strings.listSplit(item?.hashtag_en, '|').size == 0}">
+											<div id="hashtag_first" class="hashtag_wrap f_c">
+												<span>#</span>
+												<div class="input_hashtag_box">
+													<input type="text" id="hashtag" name="hashtag_en" value=""
+														class="first" 
+														placeholder="입력해주세요.">	
+												</div>
+												<button type="button" class="btn btn_black hash_btn en"
+													onclick="historyHashtagAdd()">추가</button>
+											</div>	
+										</th:block>
+										</dd>
+									</dl>
+									<dl class="use_box txt_on_off">
+										<dt class="list_tit">영문 노출여부</dt>
+										<dd class="list_cont">
+											<label th:for="'en_show_y'+${loop.index+1}">노출 <input
+												type="radio" th:id="'en_show_y'+${loop.index+1}" value="Y"
+												th:name="'en_show_yn'+${loop.index+1}" class="radio-button"
+												th:checked="${item?.show_yn_en == 'Y'}" /> <span class="custom-radio"></span>
+											</label> <label th:for="'en_show_n'+${loop.index+1}">숨김 
+											<input
+												type="radio" th:id="'en_show_n'+${loop.index+1}" value="N"
+												th:name="'en_show_yn'+${loop.index+1}" class="radio-button"
+												th:checked="${item?.show_yn_en == 'N'}" /> <span class="custom-radio"></span>
+											</label>
+										</dd>
+									</dl>
+								</div>
+							</div>
+						</div>
+					</th:block>
+<!-- 					등록 -->
+					<th:block th:if="${year == ''}">
+						<div class="cont_box dep1_list">
+							<div class="input_list_wrap">
+								<div class="td_drag opc_0">
+									<img src="/img/admin/icon/icon_menu_dark.png" alt="icon_line">
+								</div>
+								<div class="history_box ko_ver">
+									<dl class="input_long_ver">
+										<dt class="list_sub_tit">국문 내용</dt>
+										<dd class="list_cont">
+											<div class="textarea_box">
+												<textarea name="content_ko" id="" cols="30" rows="10"
+													placeholder="내용을 입력해주세요."></textarea>
+											</div>
+										</dd>
+									</dl>
+									<dl class="input_hashtag_wrap">
+										<dt class="list_sub_tit">국문 해시태그</dt>
+										<dd class="list_cont">
+											<div id="hashtag_first" class="hashtag_wrap f_c">
+												<span>#</span>
+												<div class="input_hashtag_box">
+													<input type="text" id="hashtag" name="hashtag_ko" value=""
+														class="first"
+														placeholder="입력해주세요.">
+												</div>
+												<button type="button" class="btn btn_black hash_btn ko"
+													onclick="historyHashtagAdd()">추가</button>
+											</div>
+										</dd>
+									</dl>
+									<dl class="use_box txt_on_off">
+										<dt class="list_tit">국문 노출여부</dt>
+										<dd class="list_cont">
+											<label for="ko_show_y1">노출 <input type="radio"
+												id="ko_show_y1" value="Y" name="ko_show_yn1" class="radio-button"
+												checked /> <span class="custom-radio"></span>
+											</label> <label for="ko_show_n1">숨김 <input type="radio"
+												id="ko_show_n1" value="N" name="ko_show_yn1" class="radio-button" /> <span
+												class="custom-radio"></span>
+											</label>
+										</dd>
+									</dl>
+								</div>
+								<div class="history_box en_ver">
+									<dl class="input_long_ver">
+										<dt class="list_sub_tit">영문 내용</dt>
+										<dd class="list_cont">
+											<div class="textarea_box">
+												<textarea name="content_en" id="" cols="30" rows="10"
+													placeholder="내용을 입력해주세요."></textarea>
+											</div>
+										</dd>
+									</dl>
+									<dl class="input_hashtag_wrap">
+										<dt class="list_sub_tit">영문 해시태그</dt>
+										<dd class="list_cont">
+											<div id="hashtag_first" class="hashtag_wrap f_c">
+												<span>#</span>
+												<div class="input_hashtag_box">
+													<input type="text" id="hashtag" name="hashtag_en" value=""
+														class="first"
+														placeholder="입력해주세요.">
+												</div>
+												<button type="button" class="btn btn_black hash_btn en"
+													onclick="historyHashtagAdd()">추가</button>
+											</div>
+										</dd>
+									</dl>
+									<dl class="use_box txt_on_off">
+										<dt class="list_tit">영문 노출여부</dt>
+										<dd class="list_cont">
+											<label for="en_show_y">노출 <input type="radio"
+												id="en_show_y1" value="Y" name="en_show_yn1" class="radio-button"
+												checked /> <span class="custom-radio"></span>
+											</label> <label for="en_show_n1">숨김 <input type="radio"
+												id="en_show_n1" value="N" name="en_show_yn1" class="radio-button" />
+												<span class="custom-radio"></span>
+											</label>
+										</dd>
+									</dl>
+								</div>
+							</div>
+						</div>
+					</th:block>
+				</form>
+			</div>
+		</section>
+	</div>
+</th:block>
+
+</html>
+

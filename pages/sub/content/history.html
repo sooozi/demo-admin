@@ -1,0 +1,156 @@
+<!-- 콘텐츠관리 > 연혁 관리 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="admin/common/layout">
+<th:block layout:fragment="adminContent">
+    <link rel="stylesheet" href="/css/admin/sub_content.min.css">
+
+    <script>
+        function EnterKeyCheck(e) {
+            let code = event.keyCode;
+            if (code == 13) {
+                goSearch();
+            }
+        }
+
+        function delHistory() {
+            var chk_idx_arr = "";
+            $('[name=chk_list]').each(function () {
+                if ($(this).prop('checked') == true) {
+                    chk_idx_arr += $(this).val() + "|";
+                }
+            })
+
+            if (chk_idx_arr == "") {
+                alert('체크된 연혁이 없습니다.');
+                return;
+            }
+
+            if (!confirm("정말 삭제하시겠습니까?")) {
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/content/delHistory",
+                dataType: "text",
+                data:
+                {
+                    chk_idx_arr: chk_idx_arr
+                },
+                error: function () {
+                    console.log("AJAX ERROR");
+                },
+                success: function (data) {
+                    // console.log(data);
+                    var result = JSON.parse(data);
+                    alert(result.msg);
+                    if (result.isSuc == 'success') {
+                        location.reload();
+                    }
+                }
+            });
+        }
+
+    </script>
+
+    <div class="content_wrapper upload_section_wrapper sub admin admin_list">
+        <section class="section admin_section">
+            <div class="page_breadcrumb_wrap">
+                <span class="bc_cont depth01 home" style="width: 12px; height: 12px;">
+                    <img src="/img/admin/icon/lnb_home.png" alt="home">
+                </span>
+                <span class="bc_cont depth02">콘텐츠 관리</span>
+                <span class="bc_cont depth03">History 관리</span>
+            </div>
+            <!-- //page_breadcrumb_wrap -->
+
+            <div class="section_top">
+                <div class="tit_cont">
+                    <h3 class="page_name">History 관리</h3>
+                </div>
+                <div class="btn_cont">
+                    <div class="list_search popup_ver">
+                        <div class="search_box">
+                            <div class="search_input">
+                                <input type="search" title="리스트 검색" placeholder="연도를 검색해주세요." id="search_name"
+                                    name="search_name" onkeyup="EnterKeyCheck(this)" th:value="${search_name}">
+                                <button type="button" class="search_detail_btn">검색조건 열기</button>
+                            </div>
+                            <button type="button" class="search_btn" onclick="goSearch()"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cont_box">
+                <div class="list_wrapper">
+                    <div class="list_info">
+                        <div class="list_count">
+                            <strong th:text="${list.size}+'개'"></strong>
+                            <span th:text="'전체 '+${HistoryCount}+'개'"></span>
+                        </div>
+                        <div class="btn_cont">
+                            <button type="button" class="btn btn_flat btn_white btn_delete" onclick="delHistory()">선택항목
+                                삭제</button>
+                            <button type="button" class="btn btn_flat btn_black btn_upload"
+                                onclick="location.href='/admin/content/history_edit'">등록</button>
+                        </div>
+                    </div>
+                    <div class="table_default">
+                        <table class="table_type_a">
+                            <colgroup>
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th><span class="input_chk"><input type="checkbox" id="chk_all"
+                                                onchange="allChk(this.checked)"><label for="chk_all"
+                                                class="input_chk_label"></label></span></th>
+                                    <th>NO.</th>
+                                    <th>연도</th>
+                                    <th>작성자</th>
+                                    <th>수정</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item, loop : ${list}">
+                                    <td class="td_chk"><span class="input_chk"><input type="checkbox"
+                                                th:id="'chk_list'+${item?.year}" name="chk_list"
+                                                th:value="${item?.year}"><label class="input_chk_label"
+                                                th:for="'chk_list'+${item?.year}"></label></span></td>
+                                    <td class="td_num"><span th:text="${((page-1)*listSize)+loop.index+1}"
+                                            class="td_txt">20</span></td>
+                                    <td class="td_date"><span th:text="${item?.year}" class="td_txt">2023</span></td>
+                                    <td class="td_name"><span th:text="${item?.submit_user}"
+                                            class="td_txt">admin1</span></td>
+                                    <td class="td_edit"><a th:href="'./history_edit?year='+${item?.year}"
+                                            class="circle_btn btn_edit"></a></td>
+                                </tr>
+                                <!--                                     <tr> -->
+                                <!--                                         <td class="td_chk"><span class="input_chk"><input type="checkbox" id="chk_list1" name="chk_list"><label class="input_chk_label" for="chk_list1"></label></span></td> -->
+                                <!--                                         <td class="td_num"><span class="td_txt">20</span></td>  -->
+                                <!--                                         <td class="td_date"><span class="td_txt">2023</span></td> -->
+                                <!--                                         <td class="td_detail td_txt_left"><span class="td_txt">국내 62개 캠퍼스, 베트남 8개 캠퍼스 운영</span></td> -->
+                                <!--                                         <td class="td_show"><span class="td_txt">노출</span></td> -->
+                                <!--                                         <td class="td_name"><span class="td_txt">admin1</span></td> -->
+                                <!--                                         <td class="td_edit"><a href="./history_edit" class="circle_btn btn_edit"></a></td> -->
+                                <!--                                     </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <th:block th:replace="/admin/common/paging_admin :: inc_paging"></th:block><br>
+                <!-- 개발 전 페이지네이션 -->
+                <!-- <div class="pagination_wrap">
+                        <ul>
+                            <li class="page_first"><a href-="">First</a></li>
+                            <li class="page_current"><a href="">1</a></li>
+                            <li class="page_prev"><a href-="">Prev</a></li>
+                        </ul>
+                    </div> -->
+                <!-- <th:block th:replace="/admin/common/paging :: inc_paging"></th:block><br> -->
+            </div>
+        </section>
+    </div>
+</th:block>
+
+</html>

@@ -1,0 +1,14 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" />
+<script src="//code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+<div th:fragment="ckeditor" style="">
+	<script>
+	document.addEventListener("DOMContentLoaded", function(){
+		CKEDITOR.replace('contents');
+	});
+	
+	</script>
+	<form id="img_upload_form" action="/admin/content/ckeditor_upload" enctype="multipart/form-data" method="post">
+		<input type='file' id="img_file" multiple="multiple" name='imgfile' accept="image/*">
+	</form>
+</div>

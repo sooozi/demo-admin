@@ -1,0 +1,377 @@
+<!-- 콘텐츠관리 > 뉴스 관리 > 뉴스 등록/수정 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/common/layout">
+    <th:block layout:fragment="adminContent">
+		<div th:replace="/admin/common/ckeditor"></div>
+        <link rel="stylesheet" href="/css/admin/sub_content.min.css">
+
+        <!--datePicker-->
+        <script src="/datetimePicker/jquery.datetimepicker.full.min.js"></script>
+        <script src="/js/function.js"></script>
+        <link rel="stylesheet" href="/datetimePicker/jquery.datetimepicker.css">
+        <script th:inline="javascript">
+            $(document).ready(function(){
+                jQuery('.date_time_picker').datetimepicker({
+                    format:'Y.m.d',
+                    lang:'kr',
+                    // step:30
+                });
+                
+               $('.xdsoft_timepicker').hide();
+                
+            })
+        </script>
+        <!--datePicker-->
+        <!--colorPicker-->
+        <link rel="stylesheet" href="/css/admin/jquery.minicolors.css">
+        <script src="/js/admin/jquery.minicolors.js"></script>
+        <script src="/js/admin/jquery.minicolors.min.js"></script>
+        <script>
+            window.onload = function(){
+
+                $('.demo').each( function() {
+                    $(this).minicolors({
+                    control: $(this).attr('data-control') || 'hue',
+                    defaultValue: $(this).attr('data-defaultValue') || '',
+                    format: $(this).attr('data-format') || 'hex',
+                    keywords: $(this).attr('data-keywords') || '',
+                    inline: $(this).attr('data-inline') === 'true',
+                    letterCase: $(this).attr('data-letterCase') || 'lowercase',
+                    opacity: $(this).attr('data-opacity'),
+                    position: $(this).attr('data-position') || 'right',
+                    swatches: $(this).attr('data-swatches') ? $(this).attr('data-swatches').split('|') : [],
+                    change: function(hex, opacity) {
+                        var log;
+                        try {
+                            log = hex ? hex : 'transparent';
+                            if( opacity ) log += ', ' + opacity;
+                         //   console.log(log);
+                            } catch(e) {}
+                        },
+                        theme: 'default'
+                    });
+                });
+            }
+        </script>
+        <!--colorPicker-->
+        <script>
+
+            function fncSubmit()
+            {
+                if (CKEDITOR.instances.contents.mode == "source") {
+                    alert("소스보기 상태에선 저장할 수 없습니다.");
+                    return false;
+                }
+                CKEDITOR.instances.contents.updateElement();
+                
+               	let title = $("#title").val();
+               	let bg_color = '';
+               	let show_yn = '';
+                let thumnail_ori = $("#thumnail_ori").val();
+                
+                if($('#chk_top_fixed').is(':checked')){
+	                if(!(thumnail_ori != '' && thumnail_ori != null && thumnail_ori != 'undefined')){
+				         alert('썸네일을 등록해 주세요');
+				         return;
+				    }
+	            }
+                
+                $("input[name=bg_color]").each(function(){
+                	if($(this).is(':checked')){
+                		bg_color = $(this).val();
+                	}
+                });
+                
+                $("input[name=show_yn]").each(function(){
+                	if($(this).is(':checked')){
+                		show_yn = $(this).val();
+                	}
+                });
+               	
+                if(!(title != '' && title != null && title != 'undefined')){
+    				alert('제목 입력해 주세요');
+    				return;
+    			}
+                if(!(bg_color != '' && bg_color != null && bg_color != 'undefined')){
+    				alert('배경컬러를 선택해 주세요');
+    				return;
+    			}
+                if(!(show_yn != '' && show_yn != null && show_yn != 'undefined')){
+    				alert('노출여부를 선택해 주세요');
+    				return;
+    			}
+            	
+                //상단고정
+                if($('#chk_top_fixed').is(':checked')){
+                	$('#chk_top_fixed').val('Y')
+                }else {
+                	$('#chk_top_fixed').val('N')
+                }
+                
+	            $.ajax({
+	                url: "/admin/content/news_edit_proc",
+	                type: "POST",
+	                data: new FormData($("#fncForm")[0]),
+	                enctype: 'multipart/form-data',
+	                processData: false,
+	                contentType: false,
+	                cache: false,
+	                async: false,
+	                success: function (data) {
+	                   // console.log(data);
+	                    if(data.isSuc == "success")
+	                    {
+	                        alert(data.msg);
+	                        location.href="/admin/content/news"
+	                    }
+	                    else
+	                    {
+	                        alert(data.msg);
+	                    }
+	                },
+	                error: function () {
+	                }
+	            });
+        	}
+
+            function thumnail_edit()
+            {
+            	let thumnail_ori = $("#thumnail_ori").val();
+            	
+            	if(!(thumnail_ori != '' && thumnail_ori != null && thumnail_ori != 'undefined')){
+    				alert('썸네일을 선택해 주세요');
+    				return;
+    			} 
+            	
+	            $.ajax({
+	                url: "/admin/content/thumnail_edit",
+	                type: "POST",
+	                data: new FormData($("#thumForm")[0]),
+	                enctype: 'multipart/form-data',
+	                processData: false,
+	                contentType: false,
+	                cache: false,
+	                async: false,
+	                success: function (data) {
+	                   // console.log(data);
+	                    if(data.isSuc == "success")
+	                    {
+	                        alert(data.msg);
+	                        $('.pop_thumbnail_edit').removeClass('act');
+	                        $("#idx").val(data.idx);
+	                        $("#fix_idx").val(data.idx);
+	                    }
+	                    else
+	                    {
+	                        alert(data.msg);
+	                    }
+	                },
+	                error: function () {
+	                }
+	            });
+        	}
+            
+        window.addEventListener('load', function() {
+            document.getElementById('img_file').style.display = 'none';
+        });
+        </script>
+
+        <div class="content_wrapper upload_section_wrapper sub content news_edit">
+            <section class="section mypage_section">
+                <div class="page_breadcrumb_wrap">
+                    <span class="bc_cont depth01 home" style="width: 12px; height: 12px;">
+                        <img src="/img/admin/icon/lnb_home.png" alt="home">
+                    </span>
+                    <span class="bc_cont depth02">콘텐츠관리</span> 
+                    <span class="bc_cont depth03">News관리</span>
+                    <span class="bc_cont depth04">News 등록/수정</span>
+                </div>
+                <div class="section_top">
+                    <div class="tit_cont">
+                        <h3 class="page_name">News 등록/수정</h3>
+                    </div>
+                    <div class="btn_cont">
+                        <a href="/admin/content/news" class="btn btn_white btn_back">목록</a>
+                        <button type="button" class="btn btn_black" onclick="fncSubmit()">저장</button>
+                    </div>
+                </div>
+                <div class="cont_box">
+                    <form id="fncForm" name="fncForm" method="post" enctype="multipart/form-data">
+                        <div class="input_list_wrap">
+                            <div class="inner_top f_b">
+                                <div class="inner_cont inner_left">
+                                    <dl class="use_box txt_on_off">
+                                        <dt class="list_tit">노출 여부</dt>
+                                        <dd class="list_cont"> 
+                                            <label for="use01">노출
+                                                <input type="radio" id="use01" name="show_yn" class="radio-button" value="Y" th:checked="${item?.show_yn == 'Y'}"/>
+                                                <span class="custom-radio"></span>
+                                            </label>
+            
+                                            <label for="use02">숨김
+                                                <input type="radio" id="use02" name="show_yn" class="radio-button" value="N" th:checked="${item?.show_yn == 'N'}"/>
+                                                <span class="custom-radio"></span>
+                                            </label>
+                                        </dd>
+                                    </dl>
+                                    <dl class="top_fixed_box" th:classappend="${fix_edit}">
+                                        <dt class="list_tit">상단 고정</dt>
+                                        <dd class="list_cont"> 
+                                            <span class="input_chk">
+                                                <input type="checkbox" id="chk_top_fixed" name="fix_yn" value="Y" th:checked="${item?.fix_yn == 'Y'}">
+                                                <label class="input_chk_label" for="chk_top_fixed"></label>
+                                                <span>상단 고정</span>
+                                            </span>
+                                            <div class="btn_box">
+                                                <button type="button" class="btn btn_black btn_thumb" onclick="popThumb()">썸네일 등록/수정</button>
+                                            </div>
+                                        </dd>
+                                    </dl> 
+
+                                    <dl>
+                                        <dt class="list_tit">제목</dt>
+                                        <dd class="list_cont">
+                                        	<input type="hidden" id="idx" name="idx" th:value="${item?.idx}">
+                                            <input type="text" id="title" name="title" th:value="${item?.title}" placeholder="제목을 입력해주세요.">
+                                        </dd>
+                                    </dl>
+                                    <dl>
+                                        <dt class="list_sub_tit">법인/브랜드명</dt>
+                                        <dd class="list_cont">
+                                            <input type="text" id="corporation" name="corporation" th:value="${item?.corporation}" placeholder="법인 또는 브랜드 명을 입력해주세요.">
+                                        </dd>
+                                    </dl>
+                                    <!-- <dl class="input_long_ver">
+                                        <dt class="list_tit">담당업무</dt>
+                                        <dd class="list_cont">
+                                            <div class="textarea_box">
+                                                <textarea name="" id="" cols="30" rows="10" placeholder="담당업무를 입력해주세요."></textarea>
+                                            </div>
+                                        </dd>
+                                    </dl> -->
+                                    <!-- <dl class="input_long_ver">
+                                        <dt class="list_tit">자격조건</dt>
+                                        <dd class="list_cont">
+                                            <div class="textarea_box">
+                                                <textarea name="" id="" cols="30" rows="10" placeholder="자격조건를 입력해주세요."></textarea>
+                                            </div>
+                                        </dd>
+                                    </dl> -->
+                                    <!-- <dl class="input_long_ver">
+                                        <dt class="list_tit">우대사항</dt>
+                                        <dd class="list_cont">
+                                            <div class="textarea_box">
+                                                <textarea name="" id="" cols="30" rows="10" placeholder="우대사항을 입력해주세요."></textarea>
+                                            </div>
+                                        </dd>
+                                    </dl> -->
+                                </div>
+                                <div class="inner_cont inner_right">
+                                    <dl class="use_box input_long_ver">
+                                        <dt class="list_tit">배경 컬러</dt>
+                                        <dd class="list_cont"> 
+                                            <label class="color_label" for="color01">
+                                                <span class="color_box cb01" style="background-color: #9BCBDF;"></span>
+                                                <input type="radio" id="color01" name="bg_color" class="radio-button" value="#9BCBDF" th:checked="${item?.bg_color == '#9BCBDF'}"/>
+                                                <span class="custom-radio"></span>
+                                            </label>
+                                            <label for="color02">
+                                                <span class="color_box cb02" style="background-color: #EBEBF5;"></span>
+                                                <input type="radio" id="color02" name="bg_color" class="radio-button" value="#EBEBF5" th:checked="${item?.bg_color == '#EBEBF5'}"/>
+                                                <span class="custom-radio"></span>
+                                            </label>
+                                            <label for="color03">
+                                                <span class="color_box cb03" style="background-color: #C5B0CF;"></span>
+                                                <input type="radio" id="color03" name="bg_color" class="radio-button" value="#C5B0CF" th:checked="${item?.bg_color == '#C5B0CF'}"/>
+                                                <span class="custom-radio"></span>
+                                            </label>
+                                            <label for="color04">
+                                                <span class="color_box cb04" style="background-color: #EADFB2;"></span>
+                                                <input type="radio" id="color04" name="bg_color" class="radio-button" value="#EADFB2" th:checked="${item?.bg_color == '#EADFB2'}"/>
+                                                <span class="custom-radio"></span>
+                                            </label>
+                                        </dd>
+                                    </dl>
+                                    <dl class="input_hashtag_wrap">
+                                        <dt class="list_sub_tit">해시태그</dt>
+                                        <dd class="list_cont">
+                                            <div id="hashtag_first" class="hashtag_wrap f_c">
+                                                <span>#</span>
+                                                <div class="input_hashtag_box">
+                                                    <input type="text" id="hashtag1" name="hashtag1" th:value="${item?.hashtag1}" placeholder="입력해주세요.">
+                                                </div>
+                                                <!-- <button type="button" class="btn btn_black" onclick="hashtagAdd()">추가</button> -->
+                                            </div>
+                                            <div class="hashtag_wrap f_c">
+                                                <span>#</span>
+                                                <div class="input_hashtag_box">
+                                                    <input type="text" id="hashtag2" name="hashtag2" th:value="${item?.hashtag2}" placeholder="입력해주세요.">
+                                                </div>
+                                            </div>
+                                            <div class="hashtag_wrap f_c">
+                                                <span>#</span>
+                                                <div class="input_hashtag_box">
+                                                    <input type="text" id="hashtag3" name="hashtag3" th:value="${item?.hashtag3}" placeholder="입력해주세요.">
+                                                </div>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            
+                            <div class="inner_btm">
+                                <dl class="input_detail_wrap input_long_ver">
+                                    <dt>내용</dt>
+                                    <dd style="width: 100%;">
+                                        <textarea id="contents" name="contents" th:utext="${item?.content}" data-reg="내용을 입력해주세요"></textarea>
+                                    </dd>
+                                </dl> 
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 썸네일 등록/수정 팝업 -->
+            <div class="popup_wrap pop_thumbnail_edit">
+                <div class="popup_cont">
+                    <form id="thumForm" name="thumForm" method="post" enctype="multipart/form-data">
+                        <div class="popup_box">
+                            <div class="popup_close_box">
+                                <button type="button" class="popup_close"><img src="/img/icon/icon_close.png" alt="close"></button>
+                            </div>
+                            <div class="p_top_txt">
+                                <h3>썸네일 등록/수정</h3>
+                            </div>
+                            <div class="input_list_wrap p_mid">
+                                <div class="img_preview_wrap bsns_input_wrap">
+                                    <div class="input_file">
+                                    	<input type="hidden" id="fix_idx" name="fix_idx" th:value="${item?.idx}">
+                                        <input type="text" id="thumnail_ori" name="thumnail_ori" class="input_file_box" th:value="${item?.thumnail_ori}" placeholder="이곳에 파일을 업로드 해주세요.">
+                                        <div class="del_btn dn"><span></span></div>
+                                        <input type="file" id="thumnail" class="real_file file_input file_input" name="thumnail" onchange="bsnsOnClickPreview(this);" onclick="this.value=null;" accept=".gif, .jpg, .jpeg, .png, .webp" data-limit="10mb">
+                                        <label class="circle_btn" for="img"><img src="/img/admin/icon/file_upload.png" width="14" alt="첨부파일 업로드"></label>
+                                    </div>
+                                    <div class="img_preview_box">
+                                        <img id="preview" class="preview_img" name="preview" th:src="${item?.thumnail}">
+                                    </div>
+                                    <p class="file_noti">*권장사이즈 : 651 x 406 px</p>
+                                </div>
+                            </div>
+                            <div class="p_bot">
+                                <div class="btn_wrap">
+                                    <button type="button" class="btn btn_white btn_cancel popup_close">취소</button>
+                                    <button type="button" class="btn btn_black" onclick="thumnail_edit()">저장</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- // FAQ 카테고리 등록/수정 팝업 -->
+        </div>
+    </th:block>
+
+</html>
+

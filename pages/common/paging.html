@@ -1,0 +1,191 @@
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="inc_paging">
+	<head>
+		<script th:inline="javascript">
+            window.onload=function(){
+                document.querySelector("#paging_target").innerHTML = makePaging('[[${page}]]', '[[${s_page}]]', '[[${e_page}]]', '[[${pageNum}]]');
+				search_name = document.querySelector("#search_name").value;
+				start_date = cutDate(document.querySelector("#start_date").value);
+				end_date = cutDate(document.querySelector("#end_date").value);
+				order_by = document.querySelector("#order_by").value;
+
+				for (var i=0; i<document.getElementsByName("search_period").length; i++) 
+				{
+					if (document.getElementsByName("search_period")[i].checked == true) 
+					{
+						submit_radio = document.getElementsByName("search_period")[i].value;
+					}
+				}
+				for (var i=0; i<document.getElementsByName("search_show").length; i++) 
+				{
+					if (document.getElementsByName("search_show")[i].checked == true) 
+					{
+						is_show = document.getElementsByName("search_show")[i].value;
+					}
+				}
+            }
+            function getList()
+            {
+				var l_link = window.location.pathname;
+                location.href=l_link+"?page="+page+"&search_name="+search_name+"&start_date="+start_date+"&end_date="+end_date+"&order_by="+order_by+"&submit_radio="+submit_radio+"&is_show="+is_show;
+            }
+        </script>
+		<script>
+			var page = 1;
+			var search_name = "";
+			var start_date = "";
+			var end_date = "";
+			var order_by = "";
+			var submit_radio = "";
+			var is_show = "";
+			function makePaging(nowPage, s_page, e_page, pageNum)
+			{
+				page = nowPage;
+				var inner = "";
+				inner += '<ul>';
+				if(Number(page) > 5)
+				{
+                    inner += '		<li class="page_first"><a onclick="javascript:pageMove(1);">First</a></li>';
+                    inner += '		<li class="page_prev"><a onclick="javascript:pageMove('+(Number(s_page)-1)+');"><</a></li>';
+				}
+				var pagingCnt = 0;
+				if(e_page != '0')
+				{
+					for(var i = Number(s_page); i <= Number(e_page); i++)
+					{
+						pagingCnt ++;
+						if(i == page)
+						{
+							inner += '<li class="page_current"><a onclick="javascript:pageMove('+i+');">'+i+'</a></li>';
+						}
+						else
+						{
+							inner += '<li><a onclick="javascript:pageMove('+i+');">'+i+'</a></li>';
+						}
+					}
+				}
+				if(e_page == '0')
+				{
+					inner += '<li class="page_current"><a onclick="javascript:pageMove(1);">1</a></li>';
+				}
+				if(pageNum != page)
+				{
+					if(Number(pageNum) > 5)
+					{
+						if(pagingCnt > 4)
+						{
+							if(Number(e_page)+1 > Number(pageNum))
+                            {
+                                inner += '            		<li class="page_next"><a onclick="javascript:pageMove('+pageNum+');">></a></li>'; 
+                                inner += '            		<li class="page_last"><a onclick="javascript:pageMove('+pageNum+');">Last</a></li>'; 
+                                
+                            }
+                            else
+                            {
+                                inner += '            		<li class="page_next"><a onclick="javascript:pageMove('+(Number(e_page)+1)+');">></a></li>'; 
+                                inner += '            		<li class="page_last"><a onclick="javascript:pageMove('+pageNum+');">Last</a></li>'; 
+                            }
+						}
+					}
+				}
+				inner += '</ul>';
+				return inner;
+			}
+			
+			function pageMove(nowPage)
+			{
+				page = nowPage;
+				getList();
+			}
+			function goSearch()
+			{
+				search_name = document.querySelector("#search_name").value;
+				start_date = document.querySelector("#start_date").value;
+				end_date = document.querySelector("#end_date").value;
+				page = 1;
+				getList();
+			}
+			function goOrderBy()
+			{
+				order_by = document.querySelector("#order_by").value;
+				getList();
+			}
+			function lastMonthParam(val) {
+				var d = new Date()
+				var monthOfYear = d.getMonth()
+				d.setMonth(monthOfYear - Number(val))
+				return getDateStr(d)
+			}
+			function lastDay(val) {
+				var d = new Date();
+				d.setTime(new Date().getTime() - (Number(val) * 24 * 60 * 60 * 1000));
+				return getDateStr(d);
+			}
+			function lastMonth() {
+				var d = new Date()
+				var monthOfYear = d.getMonth()
+				d.setMonth(monthOfYear - 1)
+				return getDateStr(d)
+			}
+			function getDateStr(myDate){
+				var month = new String(myDate.getMonth()+1);
+				var day = new String(myDate.getDate());
+				var hours = myDate.getHours();
+				var minutes = myDate.getMinutes();
+				if(month.length == 1)
+				{ 
+					month = "0" + month; 
+				} 
+				if(day.length == 1)
+				{ 
+					day = "0" + day; 
+				} 
+				return (myDate.getFullYear() + '-' + month + '-' + day + " " + hours + ":" + minutes);
+			}
+			function setDateBySearch(val) {
+				if(val == "all")
+				{
+					$("#start_date").val("0000-00-00 00:00");
+				}
+				else
+				{
+					if(val == "7" || val == "15")
+					{
+						$("#start_date").val(lastDay(val));
+					}
+					else
+					{
+						$("#start_date").val(lastMonthParam(val));
+					}
+				}
+				$("#end_date").val(getNow_date());
+				submit_radio = val;
+			}
+			function setShowBySearch(val) {
+				is_show = val;
+			}
+			function getNow_date()
+			{
+				var date = new Date(); 
+				var year = date.getFullYear(); 
+				var month = new String(date.getMonth()+1); 
+				var day = new String(date.getDate()); 
+				var hours = date.getHours();
+				var minutes = date.getMinutes();
+
+				// 한자리수일 경우 0을 채워준다. 
+				if(month.length == 1){ 
+				month = "0" + month; 
+				} 
+				if(day.length == 1){ 
+				day = "0" + day; 
+				} 
+				return year + "-" + month + "-" + day + " " + hours + ":" + minutes;
+			}
+		</script>
+	</head>
+	<body>
+        <div class="list_pagination" id="paging_target">
+        </div>
+	</body>
+</html>
+

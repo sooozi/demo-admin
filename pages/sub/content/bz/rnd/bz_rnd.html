@@ -1,0 +1,83 @@
+<!-- 콘텐츠관리 > Business관리 > R&D 관리 (리스트) -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/common/layout">
+    <th:block layout:fragment="adminContent">
+        <link rel="stylesheet" href="/css/admin/sub_content.min.css">
+
+        <div class="content_wrapper upload_section_wrapper sub bz bz_list bz_rnd">
+            <section class="section admin_section">
+                <div class="page_breadcrumb_wrap">
+                    <span class="bc_cont depth01 home" style="width: 12px; height: 12px;">
+                        <img src="/img/admin/icon/lnb_home.png" alt="home">
+                    </span>
+                    <span class="bc_cont depth02">콘텐츠 관리</span>
+                    <span class="bc_cont depth03">Business 관리</span>
+                    <span class="bc_cont depth04">R&D 관리</span>
+                </div>
+
+                <div class="section_top">
+                    <div class="tit_cont">
+                        <h3 class="page_name">R&D 관리</h3>
+                    </div>
+                </div>
+                <div class="cont_box">
+                    <div class="list_wrapper">
+                        <div class="list_info">
+                            <div class="list_count">
+                                <strong>4개</strong>
+                                <span>전체 4개</span>
+                            </div>
+                        </div>
+                        <div id="sortable" class="table_default drag_drop_ver">
+                            <table class="table_type_a">
+                                <colgroup>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th>NO.</th>
+                                        <th>분류</th>
+                                        <th>상세</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="dep1_list">
+                                        <td class="td_num"><span class="td_txt">1</span></td> 
+                                        <td class="td_tit td_35per td_txt_left"><span class="td_txt">영어교육 콘텐츠 개발</span></td>
+                                        <td class="td_edit"><a href="/admin/content/bz_rnd_eng" class="circle_btn btn_edit"></a></td>
+                                    </tr>
+                                    <tr class="dep1_list">
+                                        <td class="td_num"><span class="td_txt">2</span></td> 
+                                        <td class="td_tit td_35per td_txt_left"><span class="td_txt">스마트 러닝 콘텐츠 개발</span></td>
+                                        <td class="td_edit"><a href="/admin/content/bz_rnd_smart" class="circle_btn btn_edit"></a></td>
+                                    </tr>
+                                    <tr class="dep1_list">
+                                        <td class="td_num"><span class="td_txt">3</span></td> 
+                                        <td class="td_tit td_35per td_txt_left"><span class="td_txt">AI 콘텐츠 개발</span></td>
+                                        <td class="td_edit"><a href="/admin/content/bz_rnd_ai" class="circle_btn btn_edit"></a></td>
+                                    </tr>
+                                    <tr class="dep1_list">
+                                        <td class="td_num"><span class="td_txt">4</span></td> 
+                                        <td class="td_tit td_35per td_txt_left"><span class="td_txt">평가 시스템 개발</span></td>
+                                        <td class="td_edit"><a href="/admin/content/bz_rnd_eval" class="circle_btn btn_edit"></a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <th:block th:replace="/admin/common/paging :: inc_paging"></th:block><br>
+                </div>
+
+            </section>
+            
+        </div>
+
+        
+
+    </th:block>
+</html>
+
+
+
+
