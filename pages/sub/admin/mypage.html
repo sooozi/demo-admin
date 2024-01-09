@@ -1,0 +1,289 @@
+<!-- 마이페이지 -->
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- <link rel="shortcut icon" href="/img/main/ico_favicon_2.ico"> -->
+        <title>데모 관리자</title>
+        
+        <link rel="stylesheet" href="/css/reset.css">
+        <link rel="stylesheet" href="/css/demo_admin.css">
+        <link rel="stylesheet" href="/css/admin/adminMusign.min.css">
+        <link rel="stylesheet" href="/css/admin/common.min.css">
+        <link rel="stylesheet" href="/css/admin/layout.min.css">
+        <link rel="stylesheet" href="/css/admin/user.min.css">
+        <link rel="stylesheet" href="/css/admin/sub.min.css">
+        <link rel="stylesheet" href="/css/admin/sub_content.min.css">
+        <link rel="stylesheet" href="/js/niceSelect/nice-select2.css">
+
+        <script src="/js/library/jquery.js"></script> 
+        <script src="/js/library/jquery.nice-select.js"></script>
+        <script src="/js/function.js"></script>
+        <script src="/js/common.js"></script>
+    </head>
+    <body>
+        <div class="admin_layout">
+            <div class="admin_header"></div>
+            <div class="admin_container">
+                <main id="container">
+                    <div class="content_wrapper upload_section_wrapper sub mypage my_main">
+                        <section class="section mypage_section">
+                            <div class="page_breadcrumb_wrap">
+                                <span class="bc_cont depth01 home" style="width: 12px; height: 12px;">
+                                    <img src="/img/admin/icon/lnb_home.png" alt="home">
+                                </span>
+                                <span class="bc_cont depth02">마이페이지</span>
+                            </div>
+                            <div class="section_top">
+                                <div class="tit_cont">
+                                    <h3 class="page_name">마이페이지</h3>
+                                </div>
+                                <div class="btn_cont">
+                                    <button type="button" class="btn btn_black btn_popup btn_password_edit dis-no">비밀번호 변경</button>
+                                    <a href="/admin/dashboard" class="btn btn_white btn_back">이전</a>
+                                    <a href="/admin/mypage_edit" class="btn btn_black btn_edit">수정</a>
+                                </div>
+                            </div>
+                            <div class="cont_box">
+                                <!-- ****************** 마스터 아닌 관리자 로그인 시 수정 불가 (no_edit 클래스 추가) ****************** -->
+                                <div class="input_list_wrap mypage_inner_wrap no_edit">
+                                    <dl>
+                                        <dt class="list_tit">ID / 이름</dt>
+                                        <dd class="list_cont f_c">
+                                            <input type="text" id="id" name="id" value="POLYadmin01" placeholder="" th:value="${item?.id}">
+                                            <input type="text" id="name" name="name" value="이지현" placeholder="" th:value="${item?.name}">
+                                        </dd>
+                                    </dl>
+                                    <dl class="top_dot">
+                                        <dt class="list_tit">법인/브랜드 관리 권한</dt>
+                                        <dd class="list_cont">
+                                            <div class="rights_chk_wrap">
+                                                <span th:each="corporationList, loop : ${corporation}" class="input_chk">
+                                                    <input type="checkbox" th:if="${item?.corporation}" th:checked="${#strings.contains(item?.corporation, '|'+corporationList?.idx+'|')}"
+                                                    th:id="'chk_rights'+${corporationList?.idx}" th:name="${'chk_list'+loop?.index}" class="input_chk_cont" th:data-idx="${corporationList?.idx}" th:value="${corporationList?.idx}">
+                                                    <input type="checkbox" th:unless="${item?.corporation}"
+                                                    th:id="'chk_rights'+${corporationList?.idx}" th:name="${'chk_list'+loop?.index}" class="input_chk_cont" th:data-idx="${corporationList?.idx}" th:value="${corporationList?.idx}">
+                                                    <label class="input_chk_label" th:for="'chk_rights'+${corporationList?.idx}">
+                                                        <span th:text="${corporationList?.name}" class="input_txt">POLY.Inspiration(본사)</span>
+                                                    </label>
+                                                </span>
+                <!--                                     <span class="input_chk"> -->
+                <!--                                         <input type="checkbox" id="chk_rights01" name="chk_list" class="input_chk_cont" data-idx="" value=""> -->
+                <!--                                         <label class="input_chk_label" for="chk_rights01"> -->
+                <!--                                             <span class="input_txt">POLY.Inspiration(본사)</span> -->
+                <!--                                         </label> -->
+                <!--                                     </span> -->
+                <!--                                     <span class="input_chk"> -->
+                <!--                                         <input type="checkbox" id="chk_rights02" name="chk_list" class="input_chk_cont" data-idx="" value=""> -->
+                <!--                                         <label class="input_chk_label" for="chk_rights02"> -->
+                <!--                                             <span class="input_txt">POLY.ESC</span> -->
+                <!--                                         </label> -->
+                <!--                                     </span> -->
+                <!--                                     <span class="input_chk"> -->
+                <!--                                         <input type="checkbox" id="chk_rights03" name="chk_list" class="input_chk_cont" data-idx="" value=""> -->
+                <!--                                         <label class="input_chk_label" for="chk_rights03"> -->
+                <!--                                             <span class="input_txt">AIEI</span> -->
+                <!--                                         </label> -->
+                <!--                                     </span> -->
+                <!--                                     <span class="input_chk"> -->
+                <!--                                         <input type="checkbox" id="chk_rights04" name="chk_list" class="input_chk_cont" data-idx="" value=""> -->
+                <!--                                         <label class="input_chk_label" for="chk_rights04"> -->
+                <!--                                             <span class="input_txt">CANB 어학원</span> -->
+                <!--                                         </label> -->
+                <!--                                     </span> -->
+                <!--                                     <span class="input_chk"> -->
+                <!--                                         <input type="checkbox" id="chk_rights04" name="chk_list" class="input_chk_cont" data-idx="" value=""> -->
+                <!--                                         <label class="input_chk_label" for="chk_rights04"> -->
+                <!--                                             <span class="input_txt">폴리어학원</span> -->
+                <!--                                         </label> -->
+                <!--                                     </span> -->
+                <!--                                     <span class="input_chk"> -->
+                <!--                                         <input type="checkbox" id="chk_rights04" name="chk_list" class="input_chk_cont" data-idx="" value=""> -->
+                <!--                                         <label class="input_chk_label" for="chk_rights04"> -->
+                <!--                                             <span class="input_txt">엠폴리어학원</span> -->
+                <!--                                         </label> -->
+                <!--                                     </span> -->
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                    <dl>
+                                        <dt class="list_tit">연락처</dt>
+                                        <dd class="list_cont">
+                                            <input type="tel" id="number" name="number" value="01012341234" placeholder="" th:value="${item?.tel_no}">
+                                        </dd>
+                                    </dl>
+                                    <dl>
+                                        <dt class="list_tit">연락처2</dt>
+                                        <dd class="list_cont">
+                                            <input type="tel" id="number2" name="number2" value="01012341234" placeholder="" th:value="${item?.tel_no2}">
+                                        </dd>
+                                    </dl>
+                                    <dl>
+                                        <dt class="list_tit">이메일</dt>
+                                        <dd class="list_cont">
+                                            <input type="email" id="email" name="email" value="POLYadmin01@gmail.com" placeholder="" th:value="${item?.email}">
+                                        </dd>
+                                    </dl>
+                                    <dl>
+                                        <dt class="list_tit">권한명</dt>
+                                        <dd class="list_cont">
+                                            <input type="text" id="rights_name" name="rights_name" value="마스터" placeholder="" th:value="${item?.master_permission}">
+                                        </dd>
+                                    </dl>
+                                    <dl class="input_long_ver dis-no">
+                                        <dt class="list_tit">메뉴권한</dt>
+                                        <dd class="list_cont">
+                                            <div class="list_cont_inner">
+                                                <div class="list_box_wrap">
+                                                    <div class="list_box">
+                                                        <div class="list_depth01">
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_cont_manage" name="chk_all" class="input_chk_cont check_all" onchange="checkAll(this)" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_cont_manage">
+                                                                    <span class="input_txt">콘텐츠 관리</span>
+                                                                </label>
+                                                            </span>
+                                                        </div>
+                                                        <div class="list_depth02">
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_bi_manage" name="chk_list_01" class="input_chk_cont" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_bi_manage">
+                                                                    <span class="input_txt">BI 관리</span>
+                                                                </label>
+                                                            </span>
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_history_manage" name="chk_list_01" class="input_chk_cont" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_history_manage">
+                                                                    <span class="input_txt">연혁 관리</span>
+                                                                </label>
+                                                            </span>
+                                                            <span class="list_depth02_line"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="list_box">
+                                                        <div class="list_depth01">
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_all02" name="chk_recruit_manage" class="input_chk_cont check_all" onchange="allChk02(this.checked)" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_all02">
+                                                                    <span class="input_txt">채용관리</span>
+                                                                </label>
+                                                            </span>
+                                                        </div>
+                                                        <div class="list_depth02">
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_recruit_setting" name="chk_list_02" class="input_chk_cont" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_depth02_list">
+                                                                    <span class="input_txt">채용기본설정</span>
+                                                                </label>
+                                                            </span>
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_recruit_notice" name="chk_list_02" class="input_chk_cont" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_recruit_notice">
+                                                                    <span class="input_txt">채용공고</span>
+                                                                </label>
+                                                            </span>
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_apply" name="chk_list_02" class="input_chk_cont" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_apply">
+                                                                    <span class="input_txt">입사지원</span>
+                                                                </label>
+                                                            </span>
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_talent" name="chk_list_02" class="input_chk_cont" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_talent">
+                                                                    <span class="input_txt">인재풀</span>
+                                                                </label>
+                                                            </span>
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_faq" name="chk_list_02" class="input_chk_cont" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_faq">
+                                                                    <span class="input_txt">FAQ</span>
+                                                                </label>
+                                                            </span>
+                                                            <span class="list_depth02_line"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="list_box">
+                                                        <div class="list_depth01">
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_admin_manage" name="chk_admin_manage" class="input_chk_cont" onchange="allChk03(this.checked)" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_admin_manage">
+                                                                    <span class="input_txt">관리자 관리</span>
+                                                                </label>
+                                                            </span>
+                                                        </div>
+                                                        <div class="list_depth02">
+                                                            <span class="input_chk">
+                                                                <input type="checkbox" id="chk_account_manage" name="chk_list_03" class="input_chk_cont" data-idx="" value="">
+                                                                <label class="input_chk_label" for="chk_account_manage">
+                                                                    <span class="input_txt">계정 관리</span>
+                                                                </label>
+                                                            </span>
+                                                            <span class="list_depth02_line"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn_black btn_popup btn_password_edit dis-no">비밀번호 변경</button>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <!-- 비밀번호 변경 팝업 -->
+                            <div class="popup_wrap">
+                                <div class="popup_cont">
+                                    <form>
+                                        <div class="popup_box">
+                                            <div class="popup_close_box">
+                                                <button type="button" class="popup_close">닫기</button>
+                                            </div>
+                                            <div class="p_top">
+                                                <div class="logo">
+                                                    <!-- <img src="/img/admin/layout/poly_logo.png" alt="logo"> -->
+                                                </div>
+                                                <h3>비밀번호 변경</h3>
+                                            </div>
+                                            <div class="input_list_wrap p_mid">
+                                                <dl>
+                                                    <dt class="list_tit">아이디</dt>
+                                                    <dd class="list_cont no_edit">
+                                                        <!-- 수정 불가 no_edit 클래스 추가 -->
+                                                        <input type="text" id="" name="" class="no_edit" value="POLYadmin01" placeholder="">
+                                                    </dd>
+                                                </dl>
+                                                <dl>
+                                                    <dt class="list_tit">변경 비밀번호</dt>
+                                                    <dd class="list_cont">
+                                                        <input type="text" id="password1" name="" value="" placeholder="변경할 비밀번호를 입력해주세요.">
+                                                        <i class="fa fa-eye fa-lg dis-no"></i>
+                                                        <span class="pw_noti">*8-15자 이내 / 영문 대소문자, 숫자 특수문자 3개 종류 혼합</span>
+                                                        <p id="same01"></p>
+                                                    </dd>
+                                                </dl>
+                                                <dl>
+                                                    <dt class="list_tit">비밀번호 확인</dt>
+                                                    <dd class="list_cont">
+                                                        <input type="text" id="password2" name="" value="" placeholder="변경할 비밀번호를 재입력해주세요.">
+                                                        <i class="fa fa-eye fa-lg dis-no"></i>
+                                                        <p id="same02"></p>
+                                                    </dd>
+                                                </dl>
+                                            </div>
+                                            <div class="p_bot">
+                                                <button type="button" class="btn btn_black save_btn">저장</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- // 비밀번호 변경 팝업 -->
+                        </section>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </body>
+</html>
+

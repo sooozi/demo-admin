@@ -2,7 +2,25 @@
 <!DOCTYPE html>
 <html lang="ko">
     <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="/img/main/ico_favicon_2.ico">
+        <title>데모 관리자</title>
         
+        <link rel="stylesheet" href="/css/reset.css">
+        <link rel="stylesheet" href="/css/admin/adminMusign.min.css">
+        <link rel="stylesheet" href="/css/admin/common.min.css">
+        <link rel="stylesheet" href="/css/admin/layout.min.css">
+        <link rel="stylesheet" href="/css/admin/user.min.css">
+        <link rel="stylesheet" href="/css/admin/sub.min.css">
+        <link rel="stylesheet" href="/css/admin/sub_content.min.css">
+        <link rel="stylesheet" href="/js/niceSelect/nice-select2.css">
+
+        <script src="/js/library/jquery.js"></script> 
+        <script src="/js/library/jquery.nice-select.js"></script>
+        <script src="/js/function.js"></script>
+        <!-- <script src="/js/common.js"></script> -->
     </head>
     <body>
         <div class="admin_layout">
@@ -171,80 +189,12 @@
     window.addEventListener('load', function () {
         let navNewsMenu = document.querySelector('.menu_A');
         if (navNewsMenu) {
+            navNewsMenu.classList.add('menu_on'); // 클래스 추가
             console.log('Element found:', navNewsMenu);
-            navNewsMenu.classList.add('menu_on');
-            console.log('Class added:', navNewsMenu.classList.contains('menu_on'));
         } else {
             console.log('Element not found');
         }
         console.log('ddddd');
     });
-
-
-    
-    // $(document).ready(function(){
-    //     // $('head').load("/pages/common/layout.html");
-    //     // $('.admin_header').load("/pages/common/header.html");
-
-
-    //     //news menu add class menu_on
-    //     // $('.main_menu .dep1.menu_A').addClass('menu_on');
-
-    //     // $("select").niceSelect();
-        
-    //     let pre_chk_idx_arr = "";
-    //     let pre_chk_sort_arr = "";
-        
-    //     // drag & drop
-    //     // $("#sortable").sortable({
-    //     //     start: function(event, ui) {
-    //     //         pre_chk_idx_arr = "";
-    //     //         pre_chk_sort_arr = "";
-                
-    //     //         $('[name=chk_list]').each(function(){
-    //     //             pre_chk_idx_arr += $(this).val().trim()+"|";
-    //     //         })
-    //     //         $('.sort').each(function(){
-    //     //             pre_chk_sort_arr += $(this).text().trim()+"|";
-    //     //         })
-    //     //     },
-    //     //     stop:function(event, ui){ /* 드랍 시 반응 제어 */
-
-    //     //         var chk_idx_arr = "";
-    //     //         var chk_sort_arr = "";
-                
-    //     //         $('[name=chk_list]').each(function(){
-    //     //             chk_idx_arr += $(this).val().trim()+"|";
-    //     //         })
-    //     //         $('.sort').each(function(){
-    //     //             chk_sort_arr += $(this).text().trim()+"|";
-    //     //         })
-                
-    //     //         if(pre_chk_sort_arr == chk_sort_arr){
-    //     //             return;
-    //     //         }
-                
-    //     //         $.ajax({
-    //     //             type : "POST",
-    //     //             url : "/admin/content/chg_news",
-    //     //             dataType : "text",
-    //     //             data : {
-    //     //                 chk_idx_arr  : chk_idx_arr,
-    //     //                 chk_sort_arr : chk_sort_arr
-    //     //             },
-    //     //             error : function() {
-    //     //                 console.log("AJAX ERROR");
-    //     //             },
-    //     //             success : function(data) {
-    //     //                 var result = JSON.parse(data);
-    //     //                 alert(result.msg);
-    //     //                 if (result.isSuc =='success') {
-    //     //                     location.reload();
-    //     //                 }
-    //     //             }
-    //     //         });
-    //     //     }
-    //     // }).disableSelection();
-    // });
 </script>
 

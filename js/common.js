@@ -49,7 +49,6 @@ window.onload = function () {
         } else {
             console.log('Element not found');
         }
-        console.log('ddddd');
     });
     
     // section tab
@@ -92,13 +91,13 @@ window.onload = function () {
     }
 
     // 헤더 > 유저 정보 'open' 클래스 추가
-    let userBtn = document.querySelector('.header_menu img'),
-        userWrap = document.querySelector('.user_info_wrap');
+    // let userBtn = document.querySelector('.header_menu img'),
+    //     userWrap = document.querySelector('.user_info_wrap');
 
-    userBtn.addEventListener('click', () => {
-        userWrap.classList.toggle('open');
-        userBtn.classList.toggle('on');
-    });
+    // userBtn.addEventListener('click', () => {
+    //     userWrap.classList.toggle('open');
+    //     userBtn.classList.toggle('on');
+    // });
 
     // 서브 메뉴 7개 이상 시 드롭 다운 추가
     let depth02TitList = document.querySelectorAll('.sub_menu_drop .sub_depth02_tit');
@@ -317,8 +316,6 @@ document.ready = function () {
 
 // textarea 100자까지 작성 & 글자수 카운팅
 textAreaCount();
-
-
 
 
 

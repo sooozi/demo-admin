@@ -1,0 +1,1135 @@
+<!-- 관리자 등록/수정 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/common/layout">
+    <th:block layout:fragment="adminContent">
+        <th:block th:replace="admin/common/topbar :: topBar"></th:block>
+        <link rel="stylesheet" href="/css/admin/account.min.css">
+        <script src="/js/admin/form_admin.js"></script>
+
+        <div class="content_wrapper upload_section_wrapper sub_banner_upload account_enter">
+            <section class="section upload_section">
+                <!--<form id="fncForm" name="fncForm" method="post" enctype="multipart/form-data" action="/admin/admin_enter_proc">-->
+                <form id="fncForm" name="fncForm" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="idx" th:value="${data}?${data.idx}:0">
+                    <div class="upload_section_top">
+                        <!-- 타이틀 -->
+                        <div class="title_cont">
+                            <span class="section_sub_title">계정 관리</span>
+                            <h2 class="section_title">관리자 등록/수정</h2>
+                        </div>
+                        <!-- 상단 우측 버튼 --> 
+                        <div class="btn_cont">
+                            <button type="button" class="btn btn_v2 btn_move" onclick="javascript:location.href='./admin_list'">목록으로 이동</button>
+                            <!--<button type="submit" class="btn btn_v1 btn_save">저장</button>-->
+                            <button type="button" class="btn btn_v1 btn_save" onclick="fncSubmit()">저장</button>
+                        </div>    
+                    </div>
+                    <div class="upload_wrapper">
+                        <div class="upload_box">
+                            <dl class="ver_top required">
+                                <dt>ID/관리자명</dt>
+                                <dd>
+                                    <div class="manager_info">
+                                        <div class="info_cont">
+                                            <input type="text" id="id" name="id" th:value="${data?.id}" placeholder="아이디를 입력하세요.">
+                                            <input type="text" id="name" name="name" th:value="${data?.name}" placeholder="관리자명을 입력하세요.">
+                                        </div>
+                                        <p class="warning_txt">* 5-15자 이내 / 영문 대문자, 영문 소문자, 숫자 특수기호(_), (-), (.)만 사용 가능 </p>
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl class="ver_top">
+                                <dt>마지막 수정일/작성자</dt>
+                                <dd>
+                                    <div class="manager_info">
+                                        <div class="info_cont">
+                                            <input type="text" name="modify_date" th:value="|${#temporals.format(data?.modify_date, 'yyyy-MM-dd HH:mm:ss')}|" placeholder="" class="no_edit regPass" disabled>
+                                            <input type="text" name="modify_name" th:value="${data?.modify_name}" placeholder="" class="no_edit regPass" disabled>
+                                        </div>
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl class="ver_top" th:classappend="${#httpServletRequest.getParameter('idx')} == null ? 'required' : ''">
+                                <dt th:text="${#httpServletRequest.getParameter('idx')} == null ? '비밀번호' : '비밀번호 변경'">비밀번호</dt>
+                                <dd>
+                                    <div class="manager_info">
+                                        <div class="info_cont">
+                                            <input id="pw01" type="password" name="password" placeholder="비밀번호를 입력하세요.">
+                                            <input id="pw02" type="password" name="passwordChk" placeholder="비밀번호를 재입력하세요.">
+                                        </div>
+                                        <p class="warning_txt">* 8자 이상 / 영문, 숫자 혼합</p>
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl class="required">
+                                <dt>연락처</dt>
+                                <dd>
+                                    <input type="tel" id="phone" name="phone" th:value="${data?.phone}" class="only_number width_calc" placeholder="10-11자리의 유효한 연락처를 입력해주세요.">
+                                </dd>
+                            </dl>
+                            <dl class="required">
+                                <dt>이메일</dt>
+                                <dd>
+                                    <input id="email" name="email" type="text" th:value="${data?.email}" class="width_calc" placeholder="이메일을 입력하세요.">
+                                </dd>
+                            </dl>
+                            <dl class="ver_top">
+                                <dt><span>메일 수신 허용 여부</span></dt>
+                                <dd>
+                                    <div class="f_cs">
+                                        <div class="td_chk">
+                                            <span class="input_chk">
+                                                <input type="checkbox" id="mailChk01" name="mail_cs_yn" value="Y" th:checked="${data?.mail_cs_yn == 'Y'}">
+                                                <label class="input_chk_label" for="mailChk01"><span class="">1:1 문의 접수 메일</span></label>
+                                            </span>
+                                        </div>
+                                        <div class="td_chk">
+                                            <span class="input_chk">
+                                                <input type="checkbox" id="mailChk02" name="mail_idea_yn" value="Y" th:checked="${data?.mail_idea_yn == 'Y'}">
+                                                <label class="input_chk_label" for="mailChk02"><span class="">아이디어 제안 접수 메일</span></label>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <p class="warning_txt">* 수신 허용 체크 : 문의/제안이 접수될 시 등록된 이메일 주소로  메일이 발송됩니다.</p>
+                                </dd>
+                            </dl>
+                            <dl class="ver_top">
+                                <dt>최근 접속일/IP</dt>
+                                <dd>
+                                    <div class="ip_info">
+                                        <div class="info_cont">
+                                            <input type="text" name="access_date" placeholder="" th:if="${data?.access_date != ''}" th:value="${data?.access_date}" class="no_edit regPass" disabled>
+                                            <input type="text" name="access_date" placeholder="" th:unless="${data?.access_date != ''}" class="no_edit regPass" disabled>
+                                            <input type="text" name="ip" placeholder="" th:if="${data?.ip != ''}" th:value="${data?.ip}" class="no_edit regPass" disabled>
+                                            <input type="text" name="ip" placeholder="" th:unless="${data?.ip != ''}" class="no_edit regPass" disabled>
+                                        </div>
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl class="ver_top required">
+                                <dt>권한 명</dt>
+                                <dd>
+                                    <div class="input_radio_wrap">
+                                        <div class="input_radio">
+                                            <input type="radio" name="permission_name" id="admin_master" value="master" th:checked="${data}?${data?.permission_name == 'master'}:'true'">
+                                            <label for="admin_master">마스터 관리자</label>
+                                        </div>
+                                        <div class="input_radio">
+                                            <input type="radio" name="permission_name" id="admin_common" value="common" th:checked="${data?.permission_name == 'common'}">
+                                            <label for="admin_common">일반 관리자</label>
+                                        </div>
+                                    </div>
+                                    <p class="warning_txt">* 마스터 관리자에게는 전체 권한이 부여되며, 일반 관리자에게는 일부 권한이 부여됩니다.</p>
+                                </dd>
+                            </dl>
+                            <dl class="ver_top toggle_cont">
+                                <dt>메뉴 권한</dt>
+                                <dd>
+                                    <div class="menu_admin_permit">
+                                        <div class="menu_permit_box main_mng">
+                                            <strong class="admin_permit_all">
+                                                <span class="input_chk">
+                                                    <input type="checkbox" id="admin_main_mngmt">
+                                                    <label for="admin_main_mngmt" class="input_chk_label input_chk_all">메인 관리</label>
+                                                </span>
+                                            </strong>
+                                            <ul class="permit_tree tree_depth2">
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_popup" name="permission_menu" value="popup_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'popup_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_popup" name="permission_menu" value="popup_list" th:unless="${data}">
+                                                        <label for="admin_popup" class="input_chk_label">팝업창 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_banner" name="permission_menu" value="banner_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'banner_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_banner" name="permission_menu" value="banner_list" th:unless="${data}">
+                                                        <label for="admin_banner" class="input_chk_label">메인 배너 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_media" name="permission_menu" value="media_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'media_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_media" name="permission_menu" value="media_list" th:unless="${data}">
+                                                        <label for="admin_media" class="input_chk_label">메인 미디어 관리</label>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="menu_permit_box about_mng">
+                                            <strong class="admin_permit_all">
+                                                <span class="input_chk">
+                                                    <input type="checkbox" id="admin_company_mngmt">
+                                                    <label for="admin_company_mngmt" class="input_chk_label input_chk_all">회사소개 관리</label>
+                                                </span>
+                                            </strong>
+                                            <ul class="permit_tree tree_depth2">
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_ci" name="permission_menu" value="company_ci" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'company_ci')}">
+                                                        <input type="checkbox" class="permission" id="admin_ci" name="permission_menu" value="company_ci" th:unless="${data}">
+                                                        <label for="admin_ci" class="input_chk_label">CI 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_history" name="permission_menu" value="company_history" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'company_history')}">
+                                                        <input type="checkbox" class="permission" id="admin_history" name="permission_menu" value="company_history" th:unless="${data}">
+                                                        <label for="admin_history" class="input_chk_label">연혁 관리</label>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="menu_permit_box media_mng">
+                                            <strong class="admin_permit_all">
+                                                <span class="input_chk">
+                                                    <input type="checkbox" id="admin_media_mngmt">
+                                                    <label for="admin_media_mngmt" class="input_chk_label input_chk_all">미디어 관리</label>
+                                                </span>
+                                            </strong>
+                                            <ul class="permit_tree tree_depth2">
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_index" name="permission_menu" value="media_index" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'media_index')}">
+                                                        <input type="checkbox" class="permission" id="admin_index" name="permission_menu" value="media_index" th:unless="${data}">
+                                                        <label for="admin_index" class="input_chk_label">미디어 인덱스</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_youtube" name="permission_menu" value="youtube_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'youtube_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_youtube" name="permission_menu" value="youtube_list" th:unless="${data}">
+                                                        <label for="admin_youtube" class="input_chk_label">유튜브 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_insta" name="permission_menu" value="insta_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'insta_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_insta" name="permission_menu" value="insta_list" th:unless="${data}">
+                                                        <label for="admin_insta" class="input_chk_label">인스타그램 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_naverPost" name="permission_menu" value="naverpost_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'naverpost_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_naverPost" name="permission_menu" value="naverpost_list" th:unless="${data}">
+                                                        <label for="admin_naverPost" class="input_chk_label">네이버 포스트 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_faceBook" name="permission_menu" value="facebook_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'facebook_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_faceBook" name="permission_menu" value="facebook_list" th:unless="${data}">
+                                                        <label for="admin_faceBook" class="input_chk_label">페이스북 관리</label>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="menu_permit_box esg_mng">
+                                            <strong class="admin_permit_all">
+                                                <span class="input_chk">
+                                                    <input type="checkbox" id="admin_sustainable_mngmt">
+                                                    <label for="admin_sustainable_mngmt" class="input_chk_label input_chk_all">지속가능경영 관리</label>
+                                                </span>
+                                            </strong>
+                                            <ul class="permit_tree tree_depth2">
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_socail" name="permission_menu" value="major_social_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'major_social_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_socail" name="permission_menu" value="major_social_list" th:unless="${data}">
+                                                        <label for="admin_socail" class="input_chk_label chk_line_2"><span class="txt_subTit">주요 사회공헌<br>활동 관리</span></label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_sustainable" name="permission_menu" value="mngmt_report_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'mngmt_report_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_sustainable" name="permission_menu" value="mngmt_report_list" th:unless="${data}">
+                                                        <label for="admin_sustainable" class="input_chk_label chk_line_2"><span class="txt_subTit">지속가능경영<br>보고서 관리</span></label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_report" name="permission_menu" value="ethical_report_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'ethical_report_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_report" name="permission_menu" value="ethical_report_list" th:unless="${data}">
+                                                        <label for="admin_report" class="input_chk_label chk_line_2"><span class="txt_subTit">윤리경영 제보 관리</span></label>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="menu_permit_box invest_mng">
+                                            <strong class="admin_permit_all">
+                                                <span class="input_chk">
+                                                    <input type="checkbox" id="admin_invest_mngmt">
+                                                    <label for="admin_invest_mngmt" class="input_chk_label input_chk_all">투자정보 관리</label>
+                                                </span>
+                                            </strong>
+                                            <ul class="permit_tree tree_depth2">
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_ir" name="permission_menu" value="ir_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'ir_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_ir" name="permission_menu" value="ir_list" th:unless="${data}">
+                                                        <label for="admin_ir" class="input_chk_label">IR 자료실 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_fnc_info" name="permission_menu" value="fnc_info_upload" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'fnc_info_upload')}">
+                                                        <input type="checkbox" class="permission" id="admin_fnc_info" name="permission_menu" value="fnc_info_upload" th:unless="${data}">
+                                                        <label for="admin_fnc_info" class="input_chk_label">재무정보 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_elec_noti" name="permission_menu" value="elec_noti_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'elec_noti_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_elec_noti" name="permission_menu" value="elec_noti_list" th:unless="${data}">
+                                                        <label for="admin_elec_noti" class="input_chk_label">전자공고 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_control" name="permission_menu" value="governance_upload" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'governance_upload')}">
+                                                        <input type="checkbox" class="permission" id="admin_control" name="permission_menu" value="governance_upload" th:unless="${data}">
+                                                        <label for="admin_control" class="input_chk_label">지배구조 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_director" name="permission_menu" value="directorate_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'directorate_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_director" name="permission_menu" value="directorate_list" th:unless="${data}">
+                                                        <label for="admin_director" class="input_chk_label">이사회 관리</label>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="menu_permit_box cs_mng">
+                                            <strong class="admin_permit_all">
+                                                <span class="input_chk">
+                                                    <input type="checkbox" id="admin_cs_mngmt">
+                                                    <label for="admin_cs_mngmt" class="input_chk_label input_chk_all">고객만족센터 관리</label>
+                                                </span>
+                                            </strong>
+                                            <ul class="permit_tree tree_depth2">
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_notice" name="permission_menu" value="notice_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'notice_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_notice" name="permission_menu" value="notice_list" th:unless="${data}">
+                                                        <label for="admin_notice" class="input_chk_label">공지사항 관리</label>
+                                                    </span>
+                                                </li>
+                                                <li>
+                                                    <span class="input_chk">
+                                                        <input type="checkbox" class="permission" id="admin_tip" name="permission_menu" value="info_list" th:if="${data}" th:checked="${#strings.contains(data?.permission_menu,'info_list')}">
+                                                        <input type="checkbox" class="permission" id="admin_tip" name="permission_menu" value="info_list" th:unless="${data}">
+                                                        <label for="admin_tip" class="input_chk_label">정보 TIP 관리</label>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl class="brand_set ver_top ver_gray toggle_cont">
+                                <dt>브랜드 권한</dt>
+                                <dd>
+                                    <p class="warning_txt">* 관리 권한을 허용할 브랜드를 선택해주세요.</p>
+                                    <div class="brand_admin_permit n01">
+                                        <div class="brand_permit_box n1 beauty_permit">
+                                            <div class="input_chk">
+                                                <input type="checkbox" class="permission" id="brand_permit_beauty" value="1" onclick="toggleClassNoEdit(this)" th:checked="${#strings.contains(checkbox_yn, '1')}">
+                                                <label for="brand_permit_beauty" class="input_chk_label">뷰티</label>
+                                            </div>
+                                            <div class="select_cont_wr">
+                                                <div class="select_cont btn_cont no_margin">
+                                                    <div class="select_wrap">
+                                                        <span class="select_shadow">
+                                                            <select name="" class="right_category regPass">
+                                                                <option value="">권한을 선택하세요.</option>
+                                                                <option value="master">마스터 권한</option>
+                                                                <option value="common">일반 권한</option>
+                                                            </select>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="select_cont btn_cont no_margin">
+                                                    <div class="select_wrap">
+                                                        <span class="select_shadow">
+                                                            <select name="" class="country_category regPass">
+                                                                <option value="">국가를 선택하세요.</option>
+                                                                <!--<option value="all">전체</option>-->
+                                                                <option value="kor">한국</option>
+                                                                <option value="eng">미국</option>
+                                                                <option value="chn">중국</option>
+                                                                <option value="jpn">일본</option>
+                                                                <option value="vtn">베트남</option>
+                                                                <option value="lus">러시아</option>
+                                                                <option value="spn">스페인</option>
+                                                            </select>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="select_cont btn_cont no_margin">
+                                                    <div class="select_wrap">
+                                                        <span class="select_shadow">
+                                                            <select name="" class="brand_category regPass">
+                                                                <option value="">브랜드를 선택하세요</option>
+                                                                <option value="all">전체</option>
+                                                                <!--<option th:each="brand : ${brand_list}" th:if="${brand?.main_brand_idx == 1}" th:value="${brand?.idx}" th:text="${brand?.brand_name}"></option>-->
+                                                                <!--<option value="전체">전체</option>
+                                                                <option value="2">age20's</option>
+                                                                <option value="3">루나</option>
+                                                                <option value="4">루나2</option>
+                                                                <option value="5">루나3</option>
+                                                                <option value="6">루나4</option>-->
+                                                            </select>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="brand_permit_box n2 personal_permit">
+                                            <div class="input_chk">
+                                                <input type="checkbox" class="permission" id="brand_permit_personal" value="2" onclick="toggleClassNoEdit(this)" th:checked="${#strings.contains(checkbox_yn, '2')}">
+                                                <label for="brand_permit_personal" class="input_chk_label">퍼스널케어</label>
+                                            </div>
+                                            <div class="select_cont_wr">
+                                                <div class="select_cont btn_cont no_margin">
+                                                    <div class="select_wrap">
+                                                        <span class="select_shadow">
+                                                            <select name="" class="right_category regPass">
+                                                                <option value="">권한을 선택하세요.</option>
+                                                                <option value="master">마스터 권한</option>
+                                                                <option value="common">일반 권한</option>
+                                                            </select>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="select_cont btn_cont no_margin">
+                                                    <div class="select_wrap">
+                                                        <span class="select_shadow">
+                                                            <select name="" class="country_category regPass">
+                                                                <option value="">국가를 선택하세요.</option>
+                                                                <!--<option value="all">전체</option>-->
+                                                                <option value="kor">한국</option>
+                                                                <option value="eng">미국</option>
+                                                                <option value="chn">중국</option>
+                                                                <option value="jpn">일본</option>
+                                                                <option value="vtn">베트남</option>
+                                                                <option value="lus">러시아</option>
+                                                                <option value="spn">스페인</option>
+                                                            </select>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="select_cont btn_cont no_margin">
+                                                    <div class="select_wrap">
+                                                        <span class="select_shadow">
+                                                            <select name="" class="brand_category regPass">
+                                                                <option value="">브랜드를 선택하세요</option>
+                                                                <option value="all">전체</option>
+                                                                <!--<option th:each="brand : ${brand_list}" th:if="${brand?.main_brand_idx == 2}" th:value="${brand?.idx}" th:text="${brand?.brand_name}"></option>-->
+                                                            </select>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="brand_permit_box n3 life_permit">
+                                            <div class="input_chk">
+                                                <input type="checkbox" class="permission" id="brand_permit_life" value="3" onclick="toggleClassNoEdit(this)" th:checked="${#strings.contains(checkbox_yn, '3')}">
+                                                <label for="brand_permit_life" class="input_chk_label">홈케어</label>
+                                            </div>
+                                            <div class="select_cont_wr">
+                                                <div class="select_cont btn_cont no_margin">
+                                                    <div class="select_wrap">
+                                                        <span class="select_shadow">
+                                                            <select name="" class="right_category regPass">
+                                                                <option value="0">권한을 선택하세요.</option>
+                                                                <option value="master">마스터 권한</option>
+                                                                <option value="common">일반 권한</option>
+                                                            </select>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="select_cont btn_cont no_margin">
+                                                    <div class="select_wrap">
+                                                        <span class="select_shadow">
+                                                            <select name="" class="country_category regPass">
+                                                                <option value="">국가를 선택하세요.</option>
+                                                                <!--<option value="all">전체</option>-->
+                                                                <option value="kor">한국</option>
+                                                                <option value="eng">미국</option>
+                                                                <option value="chn">중국</option>
+                                                                <option value="jpn">일본</option>
+                                                                <option value="vtn">베트남</option>
+                                                                <option value="lus">러시아</option>
+                                                                <option value="spn">스페인</option>
+                                                            </select>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="select_cont btn_cont no_margin">
+                                                    <div class="select_wrap">
+                                                        <span class="select_shadow">
+                                                            <select name="" class="brand_category regPass">
+                                                                <option value="">브랜드를 선택하세요</option>
+                                                                <option value="all">전체</option>
+                                                                <!--<option th:each="brand : ${brand_list}" th:if="${brand?.main_brand_idx == 3}" th:value="${brand?.idx}" th:text="${brand?.brand_name}"></option>-->
+                                                            </select>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="brand_admin_permit n02">
+                                        <div class="result_box n1 beauty_result">
+                                            <span class="txt_tit">뷰티 브랜드 권한</span>
+                                            <div class="result_cont_wr no_edit">
+                                                <ul class="result_cont_box scroll">
+                                                    <th:block th:if="${permission_list}">
+                                                        <li th:each="permission : ${permission_list}" th:if="${permission?.main_brand_idx == '1'}" class="result_cont">
+                                                            <p class="right_category_txt" th:text="${permission?.brand_permission_kor}">마스터 </p>
+                                                            <input type="hidden" name="permission_brand_idx" th:value="${permission?.idx}">
+                                                            <input type="hidden" name="main_brand_idx" th:value="${permission?.main_brand_idx}">
+                                                            <input type="hidden" name="brand_permission_name" th:value="${permission?.brand_permission_name}">
+                                                            <p class="country_category_txt" th:text="${permission?.lang_kor}">전체</p>
+                                                            <input type="hidden" name="lang" th:value="${permission?.lang}">
+                                                            <p class="brand_category_txt last" th:text="${permission?.brand_idx == '0'} ? '전체' : ${permission?.brand_name}">전체</p>
+                                                            <input type="hidden" name="brand_idx" th:value="${permission?.brand_idx == '0'} ? 'all' : ${permission?.brand_idx}">
+                                                            <button type="button" class="btn_round_close">닫기</button>
+                                                        </li>
+                                                    </th:block>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="result_box n2 personal_result">
+                                            <span class="txt_tit">퍼스널케어 브랜드 권한</span>
+                                            <div class="result_cont_wr no_edit">
+                                                <ul class="result_cont_box scroll">
+                                                    <th:block th:if="${permission_list}">
+                                                        <li th:each="permission : ${permission_list}" th:if="${permission?.main_brand_idx == '2'}" class="result_cont">
+                                                            <p class="right_category_txt" th:text="${permission.brand_permission_kor}">마스터 </p>
+                                                            <input type="hidden" name="permission_brand_idx" th:value="${permission?.idx}">
+                                                            <input type="hidden" name="main_brand_idx" th:value="${permission.main_brand_idx}">
+                                                            <input type="hidden" name="brand_permission_name" th:value="${permission.brand_permission_name}">
+                                                            <p class="country_category_txt" th:text="${permission.lang_kor}">전체</p>
+                                                            <input type="hidden" name="lang" th:value="${permission.lang}">
+                                                            <p class="brand_category_txt last" th:text="${permission.brand_idx == '0'} ? '전체' : ${permission.brand_name}">전체</p>
+                                                            <input type="hidden" name="brand_idx" th:value="${permission?.brand_idx == '0'} ? 'all' : ${permission?.brand_idx}">
+                                                            <button type="button" class="btn_round_close">닫기</button>
+                                                        </li>
+                                                    </th:block>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="result_box n3 life_result">
+                                            <span class="txt_tit">홈케어 브랜드 권한</span>
+                                            <div class="result_cont_wr no_edit">
+                                                <ul class="result_cont_box scroll">
+                                                    <th:block th:if="${permission_list}">
+                                                        <li th:each="permission : ${permission_list}" th:if="${permission?.main_brand_idx == '3'}" class="result_cont">
+                                                            <p class="right_category_txt" th:text="${permission.brand_permission_kor}">마스터 </p>
+                                                            <input type="hidden" name="permission_brand_idx" th:value="${permission?.idx}">
+                                                            <input type="hidden" name="main_brand_idx" th:value="${permission.main_brand_idx}">
+                                                            <input type="hidden" name="brand_permission_name" th:value="${permission.brand_permission_name}">
+                                                            <p class="country_category_txt" th:text="${permission.lang_kor}">전체</p>
+                                                            <input type="hidden" name="lang" th:value="${permission.lang}">
+                                                            <p class="brand_category_txt last" th:text="${permission.brand_idx == '0'} ? '전체' : ${permission.brand_name}">전체</p>
+                                                            <input type="hidden" name="brand_idx" th:value="${permission?.brand_idx == '0'} ? 'all' : ${permission?.brand_idx}">
+                                                            <button type="button" class="btn_round_close">닫기</button>
+                                                        </li>
+                                                    </th:block>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+        <script>
+            $(document).ready(function() {
+
+                //시작 시 함수 실행
+                // noSelectFirstList();
+
+                //브랜드 권한 > 체크박스 체크 전 수정 권한 x
+                $('.brand_admin_permit .nice-select').addClass('no_edit');
+
+                // 라디오 버튼 초기 설정
+                var selectedValue = $('input[name="permission_name"]:checked').val();
+                $('.toggle_cont').toggleClass('on', selectedValue === "common");
+
+                // 라디오 버튼 변경 시 이벤트 처리
+                $('input[name="permission_name"]').change(function () {
+                    $('.toggle_cont').toggleClass('on', this.value === "common");
+                });
+
+                // ******************************************************************************
+                // 브랜드 권한
+                // 브랜드 권한 > 셀렉트 박스 선택 시 나머지 셀렉 박스 활성화
+                // ******************************************************************************
+                $('.select_cont_wr').each(function() {
+                    //셀렉트박스
+                    let selectContWr = $(this);
+                    let selectCont = selectContWr.find('.select_cont .nice-select');
+                    let index = $('.brand_permit_box').index(selectContWr.closest('.brand_permit_box')) + 1;
+                    let resultCont = $('.result_box.n' + index);
+                    var inner = "";
+                    // 각 select 요소를 배열로 저장
+                    let selectElements = [
+                        selectContWr.find('.select_cont:eq(0) select'),
+                        selectContWr.find('.select_cont:eq(1) select'),
+                        selectContWr.find('.select_cont:eq(2) select')
+                    ];
+                   
+
+                    //셀렉트 선택 전!
+                    // 결과 값 일반 권한 시 디폴트 셀렉트 박스 노출
+                    let rightCategoryTxt = resultCont.find('.right_category_txt').text();
+                    if (/일반/.test(rightCategoryTxt)) {
+                        $('.brand_permit_box.n' + index).find('.nice-select.right_category').removeClass('no_edit');
+                    }
+
+                    //셀렉트 선택 시작!
+                    // [첫번째 셀렉트 박스] 변경 시 두번째 셀렉트 박스 활성화 ************************
+                    selectElements[0].change(function() {
+                        let selectCont01 = selectElements[0].siblings('.nice-select');
+                        let selectCont02 = selectElements[1].siblings('.nice-select');
+                        let selectCont03 = selectElements[2].siblings('.nice-select');
+                        let allContTxt02 = selectCont02.find('li[data-value="all"]').text();  //전체
+                        let allContTxt03 = selectCont03.find('li:first-child').text();  //전체
+                        let ResultTxt = resultCont.find('.right_category_txt').text(); //결과박스
+
+                        //일반 권한 선택 시
+                        if ($(this).val() === "common") {
+                            selectElements[0].niceSelect('update');
+                            $(this).siblings('.nice-select').removeClass('open');
+                            selectCont02.removeClass('no_edit');
+                        }
+
+                        //마스터 권한 선택 시
+                        if ($(this).val() === "master") {
+
+                            //이미 결과 박스에 일반 권한이 있는 경우
+                            if(ResultTxt.includes('일반')){
+                                var confirmation = confirm('권한이 존재합니다. 수정을 진행하시겠습니까?');
+
+                                if (!confirmation) {// 취소 선택 시
+                                    let firstList =  selectCont01.find('li:first-child').text(); 
+
+                                    selectCont01.find('li').removeClass('selected');
+                                    selectCont01.find('li[data-value="all"]').addClass('selected');
+                                    selectCont01.find('.current').text(firstList);
+                                    
+                                } else {// 확인 선택 시
+                                    resultCont.find('.result_cont').remove();
+                                    selectElements[0].niceSelect('update');
+                                    selectCont02.add(selectCont03).add($(this).siblings('.nice-select')).addClass('no_edit');
+                                    $(this).siblings('.nice-select').removeClass('open');
+                                    
+                                    //셀렉트박스 2, 3번째 리스트 첫번째 텍스트 노출
+                                    [selectCont02, selectCont03].forEach(function (selectCont) {
+                                        let firstList =  selectCont.find('li:first-child').text(); 
+        
+                                        selectCont.find('li').removeClass('selected');
+                                        selectCont.find('li[data-value="all"]').addClass('selected');
+                                        selectCont.find('.current').text(firstList);
+                                    });
+        
+                                    rightListAdd();
+                                }
+
+                            } else {
+                                selectElements[0].niceSelect('update');
+                                selectCont02.add(selectCont03).add($(this).siblings('.nice-select')).addClass('no_edit');
+                                $(this).siblings('.nice-select').removeClass('open');
+                                
+                                //셀렉트박스 2, 3번째 리스트 첫번째 텍스트 노출
+                                [selectCont02, selectCont03].forEach(function (selectCont) {
+                                    let firstList =  selectCont.find('li:first-child').text(); 
+    
+                                    selectCont.find('li').removeClass('selected');
+                                    selectCont.find('li[data-value="all"]').addClass('selected');
+                                    selectCont.find('.current').text(firstList);
+                                });
+    
+                                rightListAdd();
+                            }
+
+
+                        } else {
+                            selectElements[0].find('.list li').val(1);
+                        }
+                    });
+
+                    // [두번째 셀렉트 박스] 변경 시 마지막 셀렉트 박스 활성화 ************************
+                    selectElements[1].change(function() {
+                        let selectCont03 = selectElements[2].siblings('.nice-select');
+                        let main_brand_idx = selectContWr.prev().children('.permission').val(); //메인브랜드 idx
+                        let lang = selectElements[1].val(); //국가
+
+                        //국가별 브랜드 option
+                        muAjax({
+                            url: "/admin/ajax_brand_list",
+                            method: "post",
+                            data: {
+                                main_brand_idx : main_brand_idx,
+                                lang : lang
+                            }
+                        }).then(function (data) {
+
+                            let result = JSON.parse(data);
+                            let option = "";
+                            
+                            // 첫번째 옵션을 제외한 나머지 옵션제거
+                            selectElements[2].children('option:not(:first):not(:nth-child(2))').remove();
+                            // selectElements[2].append('<option data-value="all">전체</option>');
+
+                            if(result.length > 0){
+                                for(let i=0; i<result.length; i++){
+                                    option = $("<option value='" + result[i].idx + "'>" + result[i].brand_name + "</option>");
+                                    selectElements[2].append(option);
+                                }
+                            }
+                            
+                            selectElements[2].niceSelect('update');
+                            $(this).siblings('.nice-select').removeClass('open');
+                        })
+
+                        selectCont03.removeClass('no_edit');
+                    });
+
+                    // [마지막 셀렉트 박스] 변경 시 결과 값 노출 및 모든 셀렉트 박스 비활성화 ************************
+                    // ---> 수정 231114 > 마지막 셀렉트 박스 변경 시 첫번째 셀릭트 박스 활성화
+                    selectElements[2].change(function() {
+                        let selectCont01 = selectElements[0].siblings('.nice-select');
+                        let selectCont02 = selectElements[1].siblings('.nice-select');
+                        let selectCont03 = selectElements[2].siblings('.nice-select');
+                        
+                        //결과 추가하기
+                        rightListAdd();
+                        
+                        //셀렉트박스 2, 3번째 리스트 첫번째 텍스트 노출
+                        [selectCont01, selectCont02, selectCont03].forEach(function (selectCont) {
+                            let firstList =  selectCont.find('li:first-child').text(); 
+                            selectCont.find('li').removeClass('selected');
+                            selectCont.find('li[data-value="all"]').addClass('selected');
+                            selectCont.find('.current').text(firstList);
+                        });
+
+                        selectElements[1].siblings('.nice-select').addClass('no_edit');
+                        selectElements[2].siblings('.nice-select').addClass('no_edit');
+                    });
+
+
+                    //[브랜드 권한 > 결과 추가 함수]
+                    function rightListAdd() {
+                        let index = $('.brand_permit_box').index(selectContWr.closest('.brand_permit_box')) + 1;
+                        let resultCont = $('.result_box.n' + index);
+                        let ContBox = resultCont.find('.result_cont_box');
+                        let selectElements = selectContWr.find('.nice-select .list .selected'); // selectElements를 jQuery 객체로 래핑
+
+                        resultCont.addClass('open');
+                        resultCont.find('.result_cont_wr').removeClass('no_edit');
+
+                        //국가 전체 option 삭제로 마스터 선택시 all date if문 삽입
+                        let all_text = "전체";
+                        let all_value = "all";
+                        if(selectElements.eq(2).text() != ""){
+                            all_text = selectElements.eq(2).text();
+                            all_value = selectElements.eq(2).attr('data-value');
+                        }
+
+                        //마스터 권한 전용 하단 노출값
+                        let newFileInputMaster = $("<li>").addClass("result_cont").html(`
+                            <p class="right_category_txt">${selectElements.eq(0).text().slice(0, -2)}</p>
+                            <input type="hidden" name="permission_brand_idx" value="0">
+                            <input type="hidden" name="main_brand_idx" value="${index}">
+                            <input type="hidden" name="brand_permission_name" class="first_name" value="${selectElements.eq(0).attr('data-value')}">
+                            <p class="country_category_txt">${all_text}</p>
+                            <input type="hidden" name="lang" value="${all_value}">
+                            <p class="brand_category_txt last">${all_text}</p>
+                            <input type="hidden" name="brand_idx" value="${all_value}">
+                            <button type="button" class="btn_round_close">닫기</button>
+                        `);
+
+                        //일반 권한 전용 하단 노출값
+                        let newFileInput = $("<li>").addClass("result_cont").html(`
+                            <p class="right_category_txt">${selectElements.eq(0).text().slice(0, -2)}</p>
+                            <input type="hidden" name="permission_brand_idx" value="0">
+                            <input type="hidden" name="main_brand_idx" value="${index}">
+                            <input type="hidden" name="brand_permission_name" class="first_name" value="${selectElements.eq(0).attr('data-value')}">
+                            <p class="country_category_txt">${selectElements.eq(1).text()}</p>
+                            <input type="hidden" name="lang" value="${selectElements.eq(1).attr('data-value')}">
+                            <p class="brand_category_txt last">${all_text}</p>
+                            <input type="hidden" name="brand_idx" value="${all_value}">
+                            <button type="button" class="btn_round_close">닫기</button>
+                        `);
+                            
+                        //마스터 선택 시 결과 추가
+                        if (selectElements.eq(0).text().includes('마스터')) {
+                            ContBox.append(newFileInputMaster);
+                        }
+
+                        //일반 선택 시 결과 추가
+                        if (selectElements.eq(0).text().includes('일반')) {
+                            
+                            // 이미 존재하는 결과가 있을 경우
+                            if(ContBox.find('.result_cont').length > 0) {
+                                
+                                // 결과값 중복 유무 확인
+                                let isDuplicate = false;
+                                ContBox.find('.result_cont').each(function() {
+                                    let existingResultCont = $(this);
+                                    // console.log('선택한 값 1번' + selectElements.eq(0).attr('data-value'));
+                                    // console.log('존재한 값 1번' + existingResultCont.find('input[name=brand_permission_name]').val());
+
+                                    // console.log('선택한 값 2번' + selectElements.eq(1).attr('data-value'));
+                                    // console.log('존재한 값 2번' + existingResultCont.find('input[name=lang]').val());
+
+                                    // console.log('선택한 값 3번' + selectElements.eq(2).attr('data-value'));
+                                    // console.log('존재한 값 3번' + existingResultCont.find('input[name=brand_idx]').val());
+                                    
+                                    // 중복인 경우
+                                    if (selectElements.eq(0).attr('data-value') === existingResultCont.find('input[name=brand_permission_name]').val() &&
+                                        selectElements.eq(1).attr('data-value') === existingResultCont.find('input[name=lang]').val() &&
+                                        selectElements.eq(2).attr('data-value') === existingResultCont.find('input[name=brand_idx]').val())
+                                    {
+                                        alert('중복된 권한이 있습니다.');
+                                        isDuplicate = true;
+                                        return false; // 중복이면 루프 종료
+                                    }
+                                }); 
+                                // 중복 아닌 경우
+                                if (!isDuplicate) {
+                                    ContBox.append(newFileInput);
+                                }
+
+                            //이미 존재하는 결과가 없을 경우
+                            } else { 
+                                ContBox.append(newFileInput);
+                            }
+                        }
+                    }
+                    //  <<end>> [브랜드 권한 > 결과 추가 함수]
+                    
+                    //결과란 영역보다 리스트 영역이 길면 스크롤바 노출
+                    // let resultContBox = resultCont.find('.result_cont_box');
+                    // let resultContList = resultCont.find('.result_cont_box li');
+                    
+                    // if (resultContList.length > 5) {
+                    //     resultContBox.addClass('scroll');
+                    // } else {
+                    //     resultContBox.removeClass('scroll');
+                    // }
+                    
+                });
+                //  <<end>> 브랜드 권한 > 셀렉트 박스 선택 시 나머지 셀렉 박스 활성화
+                
+
+                // 브랜드 권한 마스터로 있을 때 체크 박스 클릭 시 알럿창 노출 : 뷰티
+                document.querySelector('#brand_permit_beauty').addEventListener("click", () => {
+                    const checkbox = document.getElementById('brand_permit_beauty');
+                    let ResultPermission = document.querySelector(".beauty_result .result_cont input[name=brand_permission_name]");
+                    let resultContElements = document.querySelectorAll(".beauty_result .result_cont");
+                    let niceSelect = document.querySelector(".beauty_permit .nice-select")
+                    let niceSelectCurrent = document.querySelector(".beauty_permit .nice-select .current")
+                    let selectList = document.querySelectorAll(".beauty_permit .nice-select .list li"); 
+                    let firstListTxt = niceSelect.querySelector('.list li:first-child').textContent;
+                    
+                    //체크가 안되어있는 상태
+                    if (checkbox.checked) {
+
+                    }
+                    //체크가 되어있는 상태
+                    if (!checkbox.checked) {
+                        //결과값에 마스터 권한이 있을 때
+                        if (ResultPermission.value === "master") {
+                            var confirmation = confirm('권한이 존재합니다. 수정을 진행하시겠습니까?');
+
+                            if (!confirmation) {
+                                //취소 선택 시 체크박스 체크 유지
+                                checkbox.checked = true;
+                            } else {
+                                checkbox.checked = false;
+                                document.querySelector(".beauty_result .result_cont").remove();
+                                document.querySelector(".beauty_result .result_cont_wr").classList.add('no_edit');
+                                selectList.forEach(function(element, index) {
+                                    element.classList.remove('selected');
+                                    niceSelectCurrent.textContent = '권한을 선택하세요.';
+                                });
+                            }
+                        }
+                        //결과값에 일반 권한이 있을 때
+                        if (ResultPermission.value === "common") {
+                            var confirmation = confirm('권한이 존재합니다. 수정을 진행하시겠습니까?');
+                            if (!confirmation) {
+                                //취소 선택 시 체크박스 체크 유지
+                                checkbox.checked = true;
+                                document.querySelector(".beauty_permit .nice-select").classList.remove('no_edit');
+                            } else {
+                                checkbox.checked = false;
+                                resultContElements.forEach(function(element) {
+                                    element.remove();
+                                });
+                                document.querySelector(".beauty_result .result_cont_wr").classList.add('no_edit');
+                            }
+                        }
+                    }
+                });
+
+                // 브랜드 권한 마스터로 있을 때 체크 박스 클릭 시 알럿창 노출 : 퍼스널
+                document.querySelector('#brand_permit_personal').addEventListener("click", () => {
+                    const checkbox = document.getElementById('brand_permit_personal');
+                    let ResultPermission = document.querySelector(".personal_result .result_cont input[name=brand_permission_name]");
+                    let resultContElements = document.querySelectorAll(".personal_result .result_cont");
+                    let niceSelect = document.querySelector(".personal_permit .nice-select")
+                    let niceSelectCurrent = document.querySelector(".personal_permit .nice-select .current")
+                    let selectList = document.querySelectorAll(".personal_permit .nice-select .list li"); 
+                    let firstListTxt = niceSelect.querySelector('.list li:first-child').textContent;
+                    
+
+                    //체크가 안되어있는 상태
+                    if (checkbox.checked) {
+
+                    }
+                    //체크가 되어있는 상태
+                    if (!checkbox.checked) {
+                        //결과값에 마스터 권한이 있을 때
+                        if (ResultPermission.value === "master") {
+                            var confirmation = confirm('권한이 존재합니다. 수정을 진행하시겠습니까?');
+
+                            if (!confirmation) {
+                                //취소 선택 시 체크박스 체크 유지
+                                checkbox.checked = true;
+                            } else {
+                                checkbox.checked = false;
+                                document.querySelector(".personal_result .result_cont").remove();
+                                document.querySelector(".personal_result .result_cont_wr").classList.add('no_edit');
+                                selectList.forEach(function(element, index) {
+                                    element.classList.remove('selected');
+                                    niceSelectCurrent.textContent = '권한을 선택하세요.';
+                                });
+                            }
+                        }
+                        //결과값에 일반 권한이 있을 때
+                        if (ResultPermission.value === "common") {
+                            var confirmation = confirm('권한이 존재합니다. 수정을 진행하시겠습니까?');
+                            if (!confirmation) {
+                                //취소 선택 시 체크박스 체크 유지
+                                checkbox.checked = true;
+                                document.querySelector(".personal_permit .nice-select").classList.remove('no_edit');
+                            } else {
+                                checkbox.checked = false;
+                                resultContElements.forEach(function(element) {
+                                    element.remove();
+                                });
+                                document.querySelector(".personal_result .result_cont_wr").classList.add('no_edit');
+                            }
+                        }
+                    }
+                });
+
+                // 브랜드 권한 마스터로 있을 때 체크 박스 클릭 시 알럿창 노출 : 라이프
+                document.querySelector('#brand_permit_life').addEventListener("click", () => {
+                    const checkbox = document.getElementById('brand_permit_life');
+                    let ResultPermission = document.querySelector(".life_result .result_cont input[name=brand_permission_name]");
+                    let resultContElements = document.querySelectorAll(".life_result .result_cont");
+                    let niceSelect = document.querySelector(".life_permit .nice-select")
+                    let niceSelectCurrent = document.querySelector(".life_permit .nice-select .current")
+                    let selectList = document.querySelectorAll(".life_permit .nice-select .list li"); 
+                    let firstListTxt = niceSelect.querySelector('.list li:first-child').textContent;
+                    
+                    //체크가 안되어있는 상태
+                    if (checkbox.checked) {
+
+                    }
+                    //체크가 되어있는 상태
+                    if (!checkbox.checked) {
+                        //결과값에 마스터 권한이 있을 때
+                        if (ResultPermission.value === "master") {
+                            var confirmation = confirm('권한이 존재합니다. 수정을 진행하시겠습니까?');
+
+                            if (!confirmation) {
+                                //취소 선택 시 체크박스 체크 유지
+                                checkbox.checked = true;
+                            } else {
+                                checkbox.checked = false;
+                                document.querySelector(".life_result .result_cont").remove();
+                                document.querySelector(".life_result .result_cont_wr").classList.add('no_edit');
+                                selectList.forEach(function(element, index) {
+                                    element.classList.remove('selected');
+                                    niceSelectCurrent.textContent = '권한을 선택하세요.';
+                                });
+                            }
+                        }
+                        //결과값에 일반 권한이 있을 때
+                        if (ResultPermission.value === "common") {
+                            var confirmation = confirm('권한이 존재합니다. 수정을 진행하시겠습니까?');
+                            if (!confirmation) {
+                                //취소 선택 시 체크박스 체크 유지
+                                checkbox.checked = true;
+                                document.querySelector(".life_permit .nice-select").classList.remove('no_edit');
+                            } else {
+                                checkbox.checked = false;
+                                resultContElements.forEach(function(element) {
+                                    element.remove();
+                                });
+                                document.querySelector(".life_result .result_cont_wr").classList.add('no_edit');
+                            }
+                        }
+                    }
+                });
+
+            });
+
+
+            // 권한 별 체크 박스 개수
+            let permit1 = $('.main_mng').find('.permission').length;
+            let permit2 = $('.about_mng').find('.permission').length;
+            let permit3 = $('.media_mng').find('.permission').length;
+            let permit4 = $('.esg_mng').find('.permission').length;
+            let permit5 = $('.invest_mng').find('.permission').length;
+            let permit6 = $('.cs_mng').find('.permission').length;
+
+            // 권한 별 전체 체크 박스
+            let permit1All = $('.main_mng .admin_permit_all input[type="checkbox"]');
+            let permit2All = $('.about_mng .admin_permit_all input[type="checkbox"]');
+            let permit3All = $('.media_mng .admin_permit_all input[type="checkbox"]');
+            let permit4All = $('.esg_mng .admin_permit_all input[type="checkbox"]');
+            let permit5All = $('.invest_mng .admin_permit_all input[type="checkbox"]');
+            let permit6All = $('.cs_mng .admin_permit_all input[type="checkbox"]');
+
+            //권한 별 체크된 체크박수 개수
+            let permit1Checked = $('.main_mng .tree_depth2 .input_chk input[type="checkbox"]:checked').length;
+            let permit2Checked = $('.about_mng .tree_depth2 .input_chk input[type="checkbox"]:checked').length;
+            let permit3Checked = $('.media_mng .tree_depth2 .input_chk input[type="checkbox"]:checked').length;
+            let permit4Checked = $('.esg_mng .tree_depth2 .input_chk input[type="checkbox"]:checked').length;
+            let permit5Checked = $('.invest_mng .tree_depth2 .input_chk input[type="checkbox"]:checked').length;
+            let permit6Checked = $('.cs_mng .tree_depth2 .input_chk input[type="checkbox"]:checked').length;
+
+
+            if(permit1 == permit1Checked){
+                permit1All.prop("checked", true);
+            }else{
+                permit1All.prop("checked",false);
+            }
+
+            if(permit2 == permit2Checked){
+                permit2All.prop("checked", true);
+            }else{
+                permit2All.prop("checked",false);
+            }
+            
+            if(permit3 == permit3Checked){
+                permit3All.prop("checked", true);
+            }else{
+                permit3All.prop("checked",false);
+            }
+
+            if(permit4 == permit4Checked){
+                permit4All.prop("checked", true);
+            }else{
+                permit4All.prop("checked",false);
+            }
+
+            if(permit5 == permit5Checked){
+                permit5All.prop("checked", true);
+            }else{
+                permit5All.prop("checked",false);
+            }
+
+            if(permit6 == permit6Checked){
+                permit6All.prop("checked", true);
+            }else{
+                permit6All.prop("checked",false);
+            }
+
+
+            // 브랜드 권한이 있는 상태일 때 활성화 + 권한 내용 노출
+            let resultWrN1 = $('.n1 .result_cont_wr').find('.result_cont_box');
+            let resultWrN2 = $('.n2 .result_cont_wr').find('.result_cont_box');
+            let resultWrN3 = $('.n3 .result_cont_wr').find('.result_cont_box');
+
+            if (resultWrN1.find('.result_cont').length > 0) {
+                resultWrN1.parent('.result_cont_wr').removeClass('no_edit')
+                $('.result_cont_box').show();
+            }
+            if(resultWrN2.find('.result_cont').length > 0) {
+                resultWrN2.parent('.result_cont_wr').removeClass('no_edit')
+            }
+            if(resultWrN3.find('.result_cont').length > 0) {
+                resultWrN3.parent('.result_cont_wr').removeClass('no_edit')
+            }
+
+            
+            // result_close 버튼 클릭 시 해당 result_cont 삭제
+            $(document).on('click', '.btn_round_close', function() {
+                let resultWr = $(this).parents('.result_cont_wr');
+                var resultBox = $(this).parents('.result_cont_box');
+                var resultCont = $(this).parents('.result_cont');
+                var index = resultBox.index('.result_cont_box');
+                var brandPermitBox = $('.brand_permit_box').eq(index);
+
+                resultCont.remove();
+
+                //브랜드 권한 > 결과란 리스트 0일 때 비활성화, 체크박스 체크 해제
+                if (resultWr.find('.result_cont').length < 1) {
+                    resultWr.addClass('no_edit');
+                    brandPermitBox.find('.permission').prop('checked', false);
+                    let firstList = brandPermitBox.find('.right_category .list li:first-child').text(); 
+
+                    brandPermitBox.find('li').removeClass('selected');
+                    brandPermitBox.find('.right_category .current').text(firstList);
+                }
+
+                //결과란 영역보다 리스트 영역이 길면 스크롤바 노출
+                // if (resultWr.find('.result_cont').length > 6) {
+                // } else {
+                //     resultBox.removeClass('scroll');
+                // }
+
+            });
+
+
+            // ******************************************************************************
+            // function 함수 모음
+            // ******************************************************************************
+
+            //브랜드 권한(체크박스) > 체크박스 체크 시 첫번째 셀렉트 박스 no_edit 클래스 토글
+            function toggleClassNoEdit(checkbox) {
+                var brandPermitBox = checkbox.closest('.brand_permit_box');
+                var selectBoxes = brandPermitBox.querySelectorAll('.nice-select');
+                
+                selectBoxes.forEach(function(selectBox, index) {
+                    let selectListFirst = selectBox.querySelector('.list:first-child');
+
+                    if (index === 0) {
+                        if (checkbox.checked) {
+                            selectBox.classList.remove('no_edit');
+                        } else {
+                            selectBox.classList.add('no_edit');
+                        }
+                    }
+                });
+            }
+
+            //폼 제출
+            function fncSubmit()
+            {
+                let form = document.querySelector("#fncForm");
+
+                /*if(!regCheck(form)) { return false; }*/
+                if(!check_reg()) { return false; }
+
+                muAxios(form, "./admin_enter_proc", "./admin_list")
+            }
+
+        </script>
+    </th:block>
+</html>

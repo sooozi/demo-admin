@@ -1,0 +1,120 @@
+<!-- 관리자 로그 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="admin/common/layout">
+<th:block layout:fragment="adminContent">
+    <!--datePicker-->
+    <script src="/datetimePicker/jquery.datetimepicker.full.min.js"></script>
+    <link rel="stylesheet" href="/datetimePicker/jquery.datetimepicker.css">
+    <!--datePicker-->
+    <th:block th:replace="admin/common/topbar :: topBar"></th:block>
+    <div class="content_wrapper content_list_wrapper">
+        <style>
+            table tr>*:first-of-type {
+                padding-left: 3rem;
+            }
+        </style>
+        <section class="section">
+            <div class="section_top">
+                <div class="title_cont">
+                    <span class="section_sub_title">관리자 계정 관리</span>
+                    <h2 class="section_title">관리자 로그</h2>
+                </div>
+                <div class="btn_cont">
+                    <!-- <button type="button" class="btn btn_v1 btn_upload" data-pop="excel_download" onclick="excel()">엑셀 다운로드</button> -->
+                </div>
+                <div class="list_search">
+                    <div class="search_box">
+                        <div class="search_input">
+                            <input type="search" title="리스트 검색" placeholder="여기에 검색어를 입력하세요." id="search_name" name="search_name" class="back_search_obj" onkeyup="excuteEnter(goSearch)" th:value="${search_name}">
+                            <button type="button" class="search_detail_btn">검색조건 열기</button>
+                        </div>
+                        <button type="button" class="search_btn" onclick="goSearch()">검색하기</button>
+                    </div>
+                    <div class="popup_detail popup_detail_nonborder list_search_detail">
+                        <form>
+                            <dl>
+                                <dt>등록일</dt>
+                                <dd>
+                                    <div class="input_radio_wrap">
+                                        <span class="search_radio"><input type="radio" id="search_period_7day" class="back_search_obj" name="search_period" value="7" th:checked="${search_period == '7'}"><label for="search_period_7day">7일</label></span>
+                                        <span class="search_radio"><input type="radio" id="search_period_1month" class="back_search_obj" name="search_period" value="30" th:checked="${search_period == '30'}"><label for="search_period_1month">1개월</label></span>
+                                        <span class="search_radio"><input type="radio" id="search_period_3month" class="back_search_obj" name="search_period" value="90" th:checked="${search_period == '90'}"><label for="search_period_3month">3개월</label></span>
+                                        <span class="search_radio"><input type="radio" id="search_period_all" class="back_search_obj" name="search_period" value="N" th:checked="${search_period} ? ${search_period == 'N'} : true" ><label for="search_period_all">직접입력</label></span>
+                                    </div>
+                                    <div class="input_period">
+                                        <input type="text" th:value="${search_start_date}" id="start_date" name="search_start_date" class="date_time_picker period_show_start back_search_obj" autocomplete="off" disabled="disabled"> -
+                                        <input type="text" th:value="${search_end_date}" id="end_date" name="search_end_date" class="date_time_picker period_show_end back_search_obj" autocomplete="off" disabled="disabled">
+                                    </div>
+                                </dd>
+                            </dl>
+                            <!-- <button type="button" class="popup_btn popup_btn_v1">검색하기</button> -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="list_wrapper list_wrapper_v1">
+                <div class="list_info">
+                    <div class="list_count">
+                        <strong th:text="|검색 결과 ${total_count}개|"></strong>
+                        <span th:text="|전체 ${const_total_count}개|"></span>
+                    </div>
+                </div>
+                <div class="table_default">
+                    <table class="table_type_a">
+                        <thead>
+                            <tr>
+                                <th>NO</th>
+                                <th>관리자명</th>
+                                <th>아이디</th>
+                                <th>IP</th>
+                                <th>경로</th>
+                                <th>일자</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item, loop : ${list}">
+                                <td
+                                    th:text="${((pageNum-page-1)*10)+listCount-((pageNum-page)*10)-((page-2)*10)-loop.index}">
+                                </td>
+                                <td th:text="${item.admin_name}"></td>
+                                <td th:text="${item.admin_id}"></td>
+                                <td th:text="${item.ip}"></td>
+                                <td th:text="${item.url}"></td>
+                                <td th:text="${#temporals.format(item.reg_date, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                                <!--<td th:text="${#temporals.format(item.reg_date, 'yyyy-MM-dd')}"></td>-->
+                            </tr>
+                            <!--<tr>
+                                <td>1</td>
+                                <td>애경 00팅</td>
+                                <td>aekyung10</td>
+                                <td>121.11.123.123</td>
+                                <td>admin/main/popup_upload?idx=13</td>
+                                <td>2020-08-21</td>
+                            </tr>-->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <th:block th:replace="/admin/common/seo_paging :: inc_paging"></th:block><br>
+        </section>
+    </div>
+    <script>
+        $(document).ready(function () {
+            jQuery('.date_time_picker').datetimepicker({
+                format: 'Y-m-d',
+                timepicker: false,
+                lang: 'kr',
+                step: 30
+            });
+        })
+
+        const excel = () => {
+            let s_link = window.location.pathname.split("/");
+            const l_link = "/api/v1/excel/" + s_link[s_link.length - 1];
+            location.href = l_link;
+            // location.href=l_link+"?start_date="+document.querySelector('#start_date').value+"&end_date="+document.querySelector('#end_date').value;
+        }
+    </script>
+</th:block>
+
+</html>
