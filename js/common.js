@@ -4,20 +4,54 @@
 *** */
 
 // jQuery
-$(document).ready(function () {
-    $("select").niceSelect();
+// $(document).ready(function () {
+//     $("select").niceSelect();
 
-    // drag & drop
-    $("#sortable").sortable({
-        cursor: "move",
-        items: $('.dep1_list'),
-        handle: '.sort_handle',
-    }).disableSelection();
-});
+//     // drag & drop
+//     $("#sortable").sortable({
+//         cursor: "move",
+//         items: $('.dep1_list'),
+//         handle: '.sort_handle',
+//     }).disableSelection();
+// });
 
 
 // javascript
 window.onload = function () {
+    //header import
+    async function fetchAndApplyContent(url, targetSelector) {
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`Failed to load ${url}`);
+            }
+
+            const content = await response.text();
+            document.querySelector(targetSelector).innerHTML = content;
+        } catch (error) {
+            console.error(`Error loading ${url}:`, error);
+        }
+    }
+
+    // head에 layout.html 파일을 로드
+    fetchAndApplyContent('/pages/common/layout.html', 'head');
+
+    // admin_header에 header.html 파일을 로드
+    fetchAndApplyContent('/pages/common/header.html', '.admin_header');
+
+    window.addEventListener('load', function () {
+        let navNewsMenu = document.querySelector('.menu_A');
+        if (navNewsMenu) {
+            console.log('Element found:', navNewsMenu);
+            navNewsMenu.classList.add('menu_on');
+            console.log('Class added:', navNewsMenu.classList.contains('menu_on'));
+        } else {
+            console.log('Element not found');
+        }
+        console.log('ddddd');
+    });
+    
     // section tab
     let secTabWrapper = $('.sec_tab_wr:not(.go_link)');
     let secTabContWrapper = secTabWrapper.siblings('.sec_tab_cont_wr');

@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="ko">
-    <head></head>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="/img/main/ico_favicon_2.ico">
+        <title>데모 관리자</title>
+        
+        <link rel="stylesheet" href="/css/reset.css">
+        <link rel="stylesheet" href="/css/admin/adminMusign.min.css">
+        <link rel="stylesheet" href="/css/admin/common.min.css">
+        <link rel="stylesheet" href="/css/admin/layout.min.css">
+        <link rel="stylesheet" href="/css/admin/user.min.css">
+        <link rel="stylesheet" href="/css/admin/sub.min.css">
+        <link rel="stylesheet" href="/css/admin/sub_content.min.css">
+        <link rel="stylesheet" href="/js/niceSelect/nice-select2.css">
+
+        <script src="/js/library/jquery.js"></script> 
+        <script src="/js/library/jquery.nice-select.js"></script>
+        <script src="/js/function.js"></script>
+        <script src="/js/common.js"></script>
+    </head>
+
     <body>
         <div class="admin_layout">
             <div class="admin_header"></div>
@@ -10,10 +31,10 @@
                         <section class="section dashboard_section">
                             <div class="cont_box">
                                 <div class="img_box">
-                                    <img src="/img/admin/layout/logo.png" alt="logo">
+                                    <!-- <img src="/img/admin/layout/logo.png" alt="logo"> -->
                                 </div>
                                 <h1 class="tit ko">
-                                    안녕하세요, <span class="user_id">HELLO, WORLD!</span>님.
+                                    안녕하세요. <span class="user_id">HELLO, WORLD!</span>님.
                                 </h1>
                                 <p class="txt ko">
                                     본 데모 관리자 시스템은 포트폴리오 이용자에 한해 관람할 수 있습니다.<br>
@@ -34,11 +55,5 @@
     </body>
 </html>
 
-<script src="/js/library/jquery.js"></script> 
-<script>
-    $(document).ready(function(){
-        $('head').load("/pages/common/layout.html");
-        $('.admin_header').load("./pages/common/header.html");
-    });
-</script>
+
 

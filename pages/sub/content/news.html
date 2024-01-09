@@ -1,7 +1,9 @@
 <!-- 콘텐츠관리 > 뉴스 관리 리스트 -->
 <!DOCTYPE html>
 <html lang="ko">
-    <head></head>
+    <head>
+        
+    </head>
     <body>
         <div class="admin_layout">
             <div class="admin_header"></div>
@@ -143,68 +145,106 @@
     </body>
 </html>
 
-
-<script src="/js/library/jquery.js"></script> 
 <script>
-    $(document).ready(function(){
-        $('head').load("/pages/common/layout.html");
-        $('.admin_header').load("/pages/common/header.html");
+    //header import
+    async function fetchAndApplyContent(url, targetSelector) {
+        try {
+            const response = await fetch(url);
 
-        $("select").niceSelect();
-        
-        let pre_chk_idx_arr = "";
-        let pre_chk_sort_arr = "";
-        
-        // drag & drop
-        $("#sortable").sortable({
-            start: function(event, ui) {
-                pre_chk_idx_arr = "";
-                pre_chk_sort_arr = "";
-                
-                $('[name=chk_list]').each(function(){
-                    pre_chk_idx_arr += $(this).val().trim()+"|";
-                })
-                $('.sort').each(function(){
-                    pre_chk_sort_arr += $(this).text().trim()+"|";
-                })
-            },
-            stop:function(event, ui){ /* 드랍 시 반응 제어 */
-
-                var chk_idx_arr = "";
-                var chk_sort_arr = "";
-                
-                $('[name=chk_list]').each(function(){
-                    chk_idx_arr += $(this).val().trim()+"|";
-                })
-                $('.sort').each(function(){
-                    chk_sort_arr += $(this).text().trim()+"|";
-                })
-                
-                if(pre_chk_sort_arr == chk_sort_arr){
-                    return;
-                }
-                
-                $.ajax({
-                    type : "POST",
-                    url : "/admin/content/chg_news",
-                    dataType : "text",
-                    data : {
-                        chk_idx_arr  : chk_idx_arr,
-                        chk_sort_arr : chk_sort_arr
-                    },
-                    error : function() {
-                        console.log("AJAX ERROR");
-                    },
-                    success : function(data) {
-                        var result = JSON.parse(data);
-                        alert(result.msg);
-                        if (result.isSuc =='success') {
-                            location.reload();
-                        }
-                    }
-                });
+            if (!response.ok) {
+                throw new Error(`Failed to load ${url}`);
             }
-        }).disableSelection();
+
+            const content = await response.text();
+            document.querySelector(targetSelector).innerHTML = content;
+        } catch (error) {
+            console.error(`Error loading ${url}:`, error);
+        }
+    }
+
+    // head에 layout.html 파일을 로드
+    fetchAndApplyContent('/pages/common/layout.html', 'head');
+
+    // admin_header에 header.html 파일을 로드
+    fetchAndApplyContent('/pages/common/header.html', '.admin_header');
+
+    window.addEventListener('load', function () {
+        let navNewsMenu = document.querySelector('.menu_A');
+        if (navNewsMenu) {
+            console.log('Element found:', navNewsMenu);
+            navNewsMenu.classList.add('menu_on');
+            console.log('Class added:', navNewsMenu.classList.contains('menu_on'));
+        } else {
+            console.log('Element not found');
+        }
+        console.log('ddddd');
     });
+
+
+    
+    // $(document).ready(function(){
+    //     // $('head').load("/pages/common/layout.html");
+    //     // $('.admin_header').load("/pages/common/header.html");
+
+
+    //     //news menu add class menu_on
+    //     // $('.main_menu .dep1.menu_A').addClass('menu_on');
+
+    //     // $("select").niceSelect();
+        
+    //     let pre_chk_idx_arr = "";
+    //     let pre_chk_sort_arr = "";
+        
+    //     // drag & drop
+    //     // $("#sortable").sortable({
+    //     //     start: function(event, ui) {
+    //     //         pre_chk_idx_arr = "";
+    //     //         pre_chk_sort_arr = "";
+                
+    //     //         $('[name=chk_list]').each(function(){
+    //     //             pre_chk_idx_arr += $(this).val().trim()+"|";
+    //     //         })
+    //     //         $('.sort').each(function(){
+    //     //             pre_chk_sort_arr += $(this).text().trim()+"|";
+    //     //         })
+    //     //     },
+    //     //     stop:function(event, ui){ /* 드랍 시 반응 제어 */
+
+    //     //         var chk_idx_arr = "";
+    //     //         var chk_sort_arr = "";
+                
+    //     //         $('[name=chk_list]').each(function(){
+    //     //             chk_idx_arr += $(this).val().trim()+"|";
+    //     //         })
+    //     //         $('.sort').each(function(){
+    //     //             chk_sort_arr += $(this).text().trim()+"|";
+    //     //         })
+                
+    //     //         if(pre_chk_sort_arr == chk_sort_arr){
+    //     //             return;
+    //     //         }
+                
+    //     //         $.ajax({
+    //     //             type : "POST",
+    //     //             url : "/admin/content/chg_news",
+    //     //             dataType : "text",
+    //     //             data : {
+    //     //                 chk_idx_arr  : chk_idx_arr,
+    //     //                 chk_sort_arr : chk_sort_arr
+    //     //             },
+    //     //             error : function() {
+    //     //                 console.log("AJAX ERROR");
+    //     //             },
+    //     //             success : function(data) {
+    //     //                 var result = JSON.parse(data);
+    //     //                 alert(result.msg);
+    //     //                 if (result.isSuc =='success') {
+    //     //                     location.reload();
+    //     //                 }
+    //     //             }
+    //     //         });
+    //     //     }
+    //     // }).disableSelection();
+    // });
 </script>
 
